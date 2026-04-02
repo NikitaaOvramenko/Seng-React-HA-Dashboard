@@ -1,16 +1,8 @@
 
-import {ButtonCard, Group, Row} from "@hakit/components"
+import HomePanel from "../components/home-components/HomePanel"
 
 export default function Home(){
    return (<div>
-      <Row fullWidth className="opacity-20 bg-black">
-
-         <Group title="Kitchen">
-            <ButtonCard className="bg-black">
-
-            </ButtonCard>
-         </Group>
-
-      </Row>
+      <HomePanel></HomePanel>
    </div>)
 }

@@ -15,13 +15,14 @@
   "dependencies": {
     "@tailwindcss/postcss": "^4.2.2",
     "@tailwindcss/vite": "^4.2.2",
-    "dotenv": "^17.3.1",
+    "dotenv": "^17.4.0",
     "lucide-react": "^1.7.0",
     "node-scp": "^0.0.25",
     "prompts": "^2.4.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.2",
+    "sip.js": "^0.21.2",
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
