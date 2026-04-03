@@ -2968,6 +2968,7 @@ declare module "@hakit/core" {
       | "media_player.googlenestpoint7930"
       | "media_player.googlenestpoint7b47"
       | "media_player.great_room_display"
-      | "media_player.googlenestpoint7930_2";
+      | "media_player.googlenestpoint7930_2"
+      | "text.asterisk_addon_ingress_entry";
   }
 }

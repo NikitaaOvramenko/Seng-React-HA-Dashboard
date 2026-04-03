@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { Meteors } from "../ui/meteors";
-import { Timer } from "./Timer";
 import { useTime } from "../../context/useTimeContext";
 
 export default function Screensaver() {
