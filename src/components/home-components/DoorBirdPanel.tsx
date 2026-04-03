@@ -105,7 +105,7 @@ export default function DoorBirdPanel() {
             onClick={async () => {
               try {
                 setStatus("Calling...");
-                await sip.callSip("sip:8001@asterisk");
+                await sip.callSip(import.meta.env.VITE_DOORBELL_AOR);
                 setStatus("Answered")
               } catch (err) {
                 console.error("Call failed:", err);

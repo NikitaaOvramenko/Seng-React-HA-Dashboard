@@ -1,13 +1,14 @@
 import { Web } from "sip.js";
 
+
 let simpleUser: Web.SimpleUser | null = null;
 
 
 export async function initSip(audioEl: HTMLAudioElement) {
   if (simpleUser) return simpleUser;
 
-  const server = "wss://homeassistant.taildbc544.ts.net:8089/ws";
-  const aor = "sip:100@asterisk";
+  const server = import.meta.env.VITE_ASTERISK_SERVER!
+  const aor = import.meta.env.VITE_AOR!
 
   const options: Web.SimpleUserOptions = {
     aor,
@@ -22,11 +23,11 @@ export async function initSip(audioEl: HTMLAudioElement) {
       },
     },
     userAgentOptions: {
-      authorizationUsername: "100",
-      authorizationPassword: "As123456789900",
+      authorizationUsername: import.meta.env.VITE_CALLER_NAME!,
+      authorizationPassword: import.meta.env.VITE_CALLER_PASS!,
     },
   };
-
+  
   simpleUser = new Web.SimpleUser(server, options);
 
   simpleUser.delegate = {
