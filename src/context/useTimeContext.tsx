@@ -10,7 +10,7 @@ const TimeContext = createContext<TimeContextProps | null>(null);
 type TimeProviderProps = { children: ReactNode };
 
 export function TimeProvider({ children }: TimeProviderProps) {
-  const [time, setTime] = useState<number>(10);
+  const [time, setTime] = useState<number>(15);
 
   const timeSetter = (value: number) => {
     setTime(value);
@@ -19,16 +19,18 @@ export function TimeProvider({ children }: TimeProviderProps) {
   useEffect(() => {
     const interval = setInterval(() => {
       setTime((prev) => {
-        console.log(prev)
-        if (prev <= 0) {
-          
-          return prev;
-        }
+        if (prev <= 0) return prev;
         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const reset = () => setTime(10);
+    document.addEventListener("pointerdown", reset);
+    return () => document.removeEventListener("pointerdown", reset);
   }, []);
 
   return (

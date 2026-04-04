@@ -1,4 +1,5 @@
 import { Web } from "sip.js";
+import { handleInboundCall } from "./callHandler";
 
 
 let simpleUser: Web.SimpleUser | null = null;
@@ -29,12 +30,7 @@ export async function initSip(audioEl: HTMLAudioElement) {
   };
   
   simpleUser = new Web.SimpleUser(server, options);
-
-  simpleUser.delegate = {
-    onCallReceived: async () => {
-      console.log("Incoming call received");
-    },
-  };
+  
 
   await simpleUser.connect();
   await simpleUser.register();
@@ -60,4 +56,18 @@ export async function hangupSip() {
 
 export function getSipClient() {
   return simpleUser;
+}
+
+export function setupSipClient(setCalled: React.Dispatch<React.SetStateAction<boolean>>){
+
+  const client = getSipClient();
+
+  if (!client) {
+    throw new Error("SIP client not initialized");
+  }
+    client.delegate = {
+    onCallReceived: async () => {
+      handleInboundCall(setCalled);
+    }
+  };
 }

@@ -1,63 +1,28 @@
-import { useEffect, useRef, useState } from "react";
 import { Cctv, Phone, Mic, PhoneOff, Zap, Smartphone } from "lucide-react";
 import PageHeader from "../miscellaneous/PageHeader";
 import * as sip from "../../communication/sipClient";
-import { useCamera } from "@hakit/core";
 import ReactPlayer from 'react-player'
+import { useCall } from "@/context/useCallContext";
+
 
 export default function DoorBirdPanel() {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [sipReady, setSipReady] = useState(false);
-  const [status, setStatus] = useState("Initializing...");
-
-  const camera = useCamera('camera.doorbird_live')
   
-
-  useEffect(() => {
-    let mounted = true;
-
-    const setupSip = async () => {
-      if (!audioRef.current) {
-        if (mounted) setStatus("Audio element missing");
-        return;
-      }
-
-     
-
-      try {
-        await sip.initSip(audioRef.current);
-        if (mounted) {
-          setSipReady(true);
-          setStatus("Connected");
-        }
-      } catch (err) {
-        console.error("SIP init failed:", err);
-        if (mounted) {
-          setSipReady(false);
-          setStatus("Init failed");
-        }
-      }
-    };
-
-    setupSip();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const callCxt = useCall()
 
   return (
     <div className="flex flex-col gap-5 px-4 pb-28">
+      
+      
       <PageHeader icon={Cctv} title="DoorBird" />
 
       {/* hidden audio element for remote SIP audio */}
-      <audio ref={audioRef} autoPlay />
+      <audio ref={callCxt.audioRefCur} autoPlay />
 
       {/* Camera feed */}
       <div className="relative rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 aspect-video w-full max-w-2xl mx-auto">
         <ReactPlayer
            style={{width:"100%", height:"100%"}}
-           src={camera.stream.url} autoPlay playsInline          
+           src={callCxt.cameraCur.stream.url} autoPlay playsInline          
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 flex items-end justify-between px-4 pb-3">
@@ -65,7 +30,7 @@ export default function DoorBirdPanel() {
             Doorbird live
           </span>
           <span className="text-zinc-400 text-xs font-medium bg-zinc-900/80 px-2 py-0.5 rounded-full">
-            {status}
+            {callCxt.statusCur}
           </span>
         </div>
       </div>
@@ -104,15 +69,15 @@ export default function DoorBirdPanel() {
           <button
             onClick={async () => {
               try {
-                setStatus("Calling...");
+                callCxt.statusSetter("Calling...");
                 await sip.callSip(import.meta.env.VITE_DOORBELL_AOR);
-                setStatus("Answered")
+                callCxt.statusSetter("Answered")
               } catch (err) {
                 console.error("Call failed:", err);
-                setStatus("Call failed");
+                callCxt.statusSetter("Call failed");
               }
             }}
-            disabled={!sipReady}
+            disabled={!callCxt.sipReadyCur}
             type="button"
             className="text-white text-xs font-bold tracking-widest uppercase bg-zinc-700 hover:bg-zinc-600 border border-zinc-600 px-3 py-1.5 rounded-full cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -124,23 +89,23 @@ export default function DoorBirdPanel() {
       {/* Call status card */}
       <div className="flex flex-col max-w-2xl mx-auto w-full rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden">
         <div className="flex items-center justify-center py-10">
-          <span className="text-zinc-500 text-sm font-medium">{status}</span>
+          <span className="text-zinc-500 text-sm font-medium">{callCxt.statusCur}</span>
         </div>
         <div className="flex items-center justify-around px-6 py-4 border-t border-zinc-800">
           <button
             onClick={async () => {
               try {
-                if(status == "Answered"){
+                if(callCxt.statusCur == "Answered"){
                   return
                 }
                 await sip.answerSip();
-                setStatus("Answered");
+                callCxt.statusSetter("Answered");
               } catch (err) {
                 console.error("Answer failed:", err);
-                setStatus("Answer failed");
+                callCxt.statusSetter("Answer failed");
               }
             }}
-            disabled={!sipReady}
+            disabled={!callCxt.sipReadyCur}
             type="button"
             className="w-11 h-11 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center cursor-pointer hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -160,13 +125,13 @@ export default function DoorBirdPanel() {
             onClick={async () => {
               try {
                 await sip.hangupSip();
-                setStatus("Hung up");
+                callCxt.statusSetter("Hung up");
               } catch (err) {
                 console.error("Hangup failed:", err);
-                setStatus("Hangup failed");
+                callCxt.statusSetter("Hangup failed");
               }
             }}
-            disabled={!sipReady}
+            disabled={!callCxt.sipReadyCur}
             type="button"
             className="w-11 h-11 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center cursor-pointer hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
