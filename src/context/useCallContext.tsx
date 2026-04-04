@@ -85,6 +85,7 @@ export default function CallContextProvider({children}:CallProviderProps) {
       statusSetter,
       calledSetter,
     }}>
+      <audio ref={audioRef} autoPlay style={{ display: 'none' }} />
       {children}
     </CallContext.Provider>
   );

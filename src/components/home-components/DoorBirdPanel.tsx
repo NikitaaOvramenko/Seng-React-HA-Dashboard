@@ -15,9 +15,6 @@ export default function DoorBirdPanel() {
       
       <PageHeader icon={Cctv} title="DoorBird" />
 
-      {/* hidden audio element for remote SIP audio */}
-      <audio ref={callCxt.audioRefCur} autoPlay />
-
       {/* Camera feed */}
       <div className="relative rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 aspect-video w-full max-w-2xl mx-auto">
         <ReactPlayer

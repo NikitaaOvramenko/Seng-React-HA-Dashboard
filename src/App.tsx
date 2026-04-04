@@ -7,6 +7,7 @@ import Navbar from './components/miscellaneous/Navbar';
 import Screensaver from './components/miscellaneous/Screensaver';
 import { TimeProvider } from './context/useTimeContext';
 import CallContextProvider from './context/useCallContext';
+import CallModal from "./components/miscellaneous/CallModal"
 
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
       <HashRouter>
         <div  className='absolute inset-0 pointer-events-none h-full w-full'><Screensaver></Screensaver>
         </div>
-        
+        <CallModal></CallModal>
         <Navbar />
         <Routes>
           <Route path="/" element={<MainFloor/>} />
