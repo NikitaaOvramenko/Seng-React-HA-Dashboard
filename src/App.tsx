@@ -21,16 +21,15 @@ function App() {
 
       <HashRouter>
         <SpotlightBackground>
-          <div className='absolute inset-0 pointer-events-none h-full w-full'><Screensaver></Screensaver>
-          </div>
-          <CallModal></CallModal>
-          <Navbar />
           <Routes>
             <Route path="/" element={<MainFloor/>} />
             <Route path="/outside" element={<Outside />} />
             <Route path="/doorbird" element={<DoorBird />} />
           </Routes>
         </SpotlightBackground>
+        <Screensaver />
+        <CallModal />
+        <Navbar />
       </HashRouter>
 
       </TimeProvider>
