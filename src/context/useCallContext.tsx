@@ -1,7 +1,8 @@
-import { useCamera, type CameraEntityExtended } from "@hakit/core";
+import { useCamera, useEntity, type CameraEntityExtended } from "@hakit/core";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import * as sip from "../communication/sipClient";
 import { setupSipClient } from "../communication/sipClient";
+import {ringtone} from "../lib/ringtones"
 
 interface CallContextProps {
  audioRefCur:RefObject<HTMLAudioElement | null>
@@ -24,11 +25,14 @@ const CallContext = createContext<CallContextProps | null>(null)
 
 export default function CallContextProvider({children}:CallProviderProps) {
 
+  const notification = useEntity('automation.doorbell')
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [sipReady, setSipReady] = useState(false);
     const [status, setStatus] = useState("Initializing...");
     const [called,setCalled] = useState(false)
     const camera = useCamera('camera.doorbird_live')
+   
+
 
     const sipReadySetter = (set:boolean) => {
         setSipReady(set)
@@ -52,7 +56,7 @@ export default function CallContextProvider({children}:CallProviderProps) {
   
         try {
           await sip.initSip(audioRef.current);
-          setupSipClient(setCalled);
+          setupSipClient(setCalled,setStatus,notification);
           if (mounted) {
             setSipReady(true);
             setStatus("Connected");
@@ -86,6 +90,8 @@ export default function CallContextProvider({children}:CallProviderProps) {
       calledSetter,
     }}>
       <audio ref={audioRef} autoPlay style={{ display: 'none' }} />
+      
+      {called && !(status == "Answered") && <audio src={ringtone.giornos_ringtone}  autoPlay loop style={{display:'none'}} ></audio>}
       {children}
     </CallContext.Provider>
   );

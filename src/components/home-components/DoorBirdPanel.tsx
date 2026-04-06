@@ -3,11 +3,22 @@ import PageHeader from "../miscellaneous/PageHeader";
 import * as sip from "../../communication/sipClient";
 import ReactPlayer from 'react-player'
 import { useCall } from "@/context/useCallContext";
+import { useEntity } from "@hakit/core";
 
 
 export default function DoorBirdPanel() {
-  
+  const irEntity = useEntity('button.doorbird_ir')
+  const lockEntity = useEntity('button.doorbird_relay_1')
   const callCxt = useCall()
+
+
+  const irOn = async() => {
+      irEntity.service.press();
+  }
+
+  const lockOn = async() => {
+      lockEntity.service.press();
+  }
 
   return (
     <div className="flex flex-col gap-5 px-4 pb-28">
@@ -16,7 +27,7 @@ export default function DoorBirdPanel() {
       <PageHeader icon={Cctv} title="DoorBird" />
 
       {/* Camera feed */}
-      <div className="relative rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 aspect-video w-full max-w-2xl mx-auto">
+      <div className="relative overflow-hidden aspect-video w-full max-w-2xl mx-auto" style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "1rem", boxShadow: "0 4px 32px rgba(0,0,0,0.5)" }}>
         <ReactPlayer
            style={{width:"100%", height:"100%"}}
            src={callCxt.cameraCur.stream.url} autoPlay playsInline          
@@ -35,6 +46,7 @@ export default function DoorBirdPanel() {
       {/* IR + Switch quick toggles */}
       <div className="flex gap-3 max-w-2xl mx-auto w-full">
         <button
+          onClick={() => irOn()}
           type="button"
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 border border-zinc-700 text-white text-sm font-semibold cursor-pointer hover:bg-zinc-800 hover:border-zinc-600 transition-colors"
         >
@@ -42,6 +54,7 @@ export default function DoorBirdPanel() {
           IR
         </button>
         <button
+        onClick={() => lockOn()}
           type="button"
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 border border-zinc-700 text-white text-sm font-semibold cursor-pointer hover:bg-zinc-800 hover:border-zinc-600 transition-colors"
         >
@@ -55,7 +68,7 @@ export default function DoorBirdPanel() {
         <span className="text-zinc-400 text-xs font-bold uppercase tracking-widest px-1">
           Contacts
         </span>
-        <div className="flex items-center justify-between px-4 py-3.5 rounded-2xl bg-zinc-900 border border-zinc-800">
+        <div className="flex items-center justify-between px-4 py-3.5 rounded-2xl" style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 4px 32px rgba(0,0,0,0.5)" }}>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center">
               <Smartphone size={15} className="text-zinc-400" strokeWidth={1.8} />
@@ -84,11 +97,11 @@ export default function DoorBirdPanel() {
       </div>
 
       {/* Call status card */}
-      <div className="flex flex-col max-w-2xl mx-auto w-full rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden">
+      <div className="flex flex-col max-w-2xl mx-auto w-full rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 4px 32px rgba(0,0,0,0.5)" }}>
         <div className="flex items-center justify-center py-10">
           <span className="text-zinc-500 text-sm font-medium">{callCxt.statusCur}</span>
         </div>
-        <div className="flex items-center justify-around px-6 py-4 border-t border-zinc-800">
+        <div className="flex items-center justify-around px-6 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
           <button
             onClick={async () => {
               try {

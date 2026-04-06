@@ -8,6 +8,7 @@ import Screensaver from './components/miscellaneous/Screensaver';
 import { TimeProvider } from './context/useTimeContext';
 import CallContextProvider from './context/useCallContext';
 import CallModal from "./components/miscellaneous/CallModal"
+import SpotlightBackground from './components/ui/spotlight-background';
 
 
 function App() {
@@ -17,17 +18,19 @@ function App() {
     <HassConnect hassUrl={url}>
       <CallContextProvider>
       <TimeProvider>
-      
+
       <HashRouter>
-        <div  className='absolute inset-0 pointer-events-none h-full w-full'><Screensaver></Screensaver>
-        </div>
-        <CallModal></CallModal>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<MainFloor/>} />
-          <Route path="/outside" element={<Outside />} />
-          <Route path="/doorbird" element={<DoorBird />} />
-        </Routes>
+        <SpotlightBackground>
+          <div className='absolute inset-0 pointer-events-none h-full w-full'><Screensaver></Screensaver>
+          </div>
+          <CallModal></CallModal>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<MainFloor/>} />
+            <Route path="/outside" element={<Outside />} />
+            <Route path="/doorbird" element={<DoorBird />} />
+          </Routes>
+        </SpotlightBackground>
       </HashRouter>
 
       </TimeProvider>

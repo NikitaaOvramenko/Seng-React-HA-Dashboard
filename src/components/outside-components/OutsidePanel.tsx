@@ -1,9 +1,9 @@
-import { Group } from "@hakit/components";
 import ButtonCustom from "../miscellaneous/ButtonCustom";
 import Layout from "../../Layout";
 import { useAreas, type EntityName } from "@hakit/core";
 import PageHeader from "../miscellaneous/PageHeader";
 import { Trees } from "lucide-react";
+import CustomGroup from "../miscellaneous/CustomGroup";
 
 const areaChoice = ["Deck", "Front Door", "Outside"];
 
@@ -40,9 +40,8 @@ export default function OutsidePanel() {
       <PageHeader icon={Trees} title="Outside" />
       <Layout>
         {areas.map((area) => (
-          <Group
+          <CustomGroup
             key={area.area_id}
-            cssStyles={{ color: "white", backgroundColor: "#141414", border: "1px solid #262626" }}
             className="flex flex-col text-white"
             title={areaDisplayNames[area.name] ?? area.name}
           >
@@ -62,7 +61,7 @@ export default function OutsidePanel() {
                     formatEntityName(entity.entity_id)}
                 </ButtonCustom>
               ))}
-          </Group>
+          </CustomGroup>
         ))}
       </Layout>
     </div>

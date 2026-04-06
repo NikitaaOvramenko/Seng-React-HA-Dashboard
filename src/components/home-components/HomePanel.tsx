@@ -1,5 +1,5 @@
-import { Group } from "@hakit/components";
 import ButtonCustom from "../miscellaneous/ButtonCustom";
+import CustomGroup from "../miscellaneous/CustomGroup";
 import Layout from "../../Layout";
 import { useAreas, type EntityName } from "@hakit/core";
 
@@ -29,12 +29,7 @@ export default function HomePanel() {
   return (
     <Layout>
       {areas.map((area) => (
-        <Group
-          key={area.area_id}
-          cssStyles={{ color: "white", backgroundColor: "black" }}
-          className="flex flex-col text-white"
-          title={area.name}
-        >
+        <CustomGroup key={area.area_id} title={area.name} className={""} >
           {area.entities
             .filter(
               (entity) =>
@@ -43,15 +38,13 @@ export default function HomePanel() {
             )
             .map((entity) => (
               <ButtonCustom
-                className="text-white"
                 key={entity.entity_id}
-                entityName={entity.entity_id as EntityName}
-              >
+                entityName={entity.entity_id as EntityName} className={""}              >
                 {customLightNames[entity.entity_id] ??
                   formatEntityName(entity.entity_id)}
               </ButtonCustom>
             ))}
-        </Group>
+        </CustomGroup>
       ))}
     </Layout>
   );

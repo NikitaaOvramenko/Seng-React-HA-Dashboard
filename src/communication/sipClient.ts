@@ -1,5 +1,6 @@
 import { Web } from "sip.js";
-import { handleInboundCall } from "./callHandler";
+import { handleInboundCall, handleInboundHangup } from "./callHandler";
+import type { HassEntityWithService } from "@hakit/core";
 
 
 let simpleUser: Web.SimpleUser | null = null;
@@ -54,11 +55,13 @@ export async function hangupSip() {
   await simpleUser.hangup();
 }
 
+
+
 export function getSipClient() {
   return simpleUser;
 }
 
-export function setupSipClient(setCalled: React.Dispatch<React.SetStateAction<boolean>>){
+export function setupSipClient(setCalled: React.Dispatch<React.SetStateAction<boolean>>,setStatus: React.Dispatch<React.SetStateAction<string>>, notification: HassEntityWithService<"automation">){
 
   const client = getSipClient();
 
@@ -67,7 +70,11 @@ export function setupSipClient(setCalled: React.Dispatch<React.SetStateAction<bo
   }
     client.delegate = {
     onCallReceived: async () => {
-      handleInboundCall(setCalled);
+      handleInboundCall(setCalled,notification);
+    },
+
+    onCallHangup: async () => {
+      handleInboundHangup(setStatus)
     }
   };
 }

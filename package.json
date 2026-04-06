@@ -22,6 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.4.0",
+    "framer-motion": "^12.38.0",
     "lucide-react": "^1.7.0",
     "node-scp": "^0.0.25",
     "prompts": "^2.4.2",

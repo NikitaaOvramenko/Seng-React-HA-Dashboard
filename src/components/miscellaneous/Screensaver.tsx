@@ -60,7 +60,7 @@ export default function Screensaver() {
   return (
     <div
       onClick={() => ctx.timeSetter(10)}
-      className={`transition-opacity duration-500 flex justify-center items-center absolute w-full h-full z-99 ${
+      className={`transition-opacity duration-500 flex justify-center items-center fixed inset-0 z-99 ${
         ctx.curTime === 0 ? "opacity-100 pointer-events-auto"  : "pointer-events-none opacity-0"
       }`}
     >

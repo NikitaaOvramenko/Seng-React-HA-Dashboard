@@ -299,6 +299,35 @@ declare module "@hakit/core" {
         }
       >;
     };
+    ffmpeg: {
+      // Sends a start command to an FFmpeg-based sensor.
+      start: ServiceFunction<
+        object,
+        T,
+        {
+          // Name of entity that will start. Platform dependent.
+          entity_id?: string;
+        }
+      >;
+      // Sends a stop command to an FFmpeg-based sensor.
+      stop: ServiceFunction<
+        object,
+        T,
+        {
+          // Name of entity that will stop. Platform dependent.
+          entity_id?: string;
+        }
+      >;
+      // Sends a restart command to an FFmpeg-based sensor.
+      restart: ServiceFunction<
+        object,
+        T,
+        {
+          // Name of entity that will restart. Platform dependent.
+          entity_id?: string;
+        }
+      >;
+    };
     mediaPlayer: {
       // Turns on the power of the media player.
       turnOn: ServiceFunction<object, T, object>;
@@ -440,35 +469,6 @@ declare module "@hakit/core" {
         }
       >;
     };
-    ffmpeg: {
-      // Sends a start command to an FFmpeg-based sensor.
-      start: ServiceFunction<
-        object,
-        T,
-        {
-          // Name of entity that will start. Platform dependent.
-          entity_id?: string;
-        }
-      >;
-      // Sends a stop command to an FFmpeg-based sensor.
-      stop: ServiceFunction<
-        object,
-        T,
-        {
-          // Name of entity that will stop. Platform dependent.
-          entity_id?: string;
-        }
-      >;
-      // Sends a restart command to an FFmpeg-based sensor.
-      restart: ServiceFunction<
-        object,
-        T,
-        {
-          // Name of entity that will restart. Platform dependent.
-          entity_id?: string;
-        }
-      >;
-    };
     update: {
       // Installs an update for a device or service.
       install: ServiceFunction<
@@ -489,6 +489,34 @@ declare module "@hakit/core" {
     backup: {
       // Creates a new backup with automatic backup settings.
       createAutomatic: ServiceFunction<object, T, object>;
+    };
+    conversation: {
+      // Launches a conversation from a transcribed text.
+      process: ServiceFunction<
+        object,
+        T,
+        {
+          // Transcribed text input. @example Turn all lights on
+          text: string;
+          // Language of text. Defaults to server language. @example NL
+          language?: string;
+          // Conversation agent to process your request. The conversation agent is the brains of your assistant. It processes the incoming text commands. @example homeassistant
+          agent_id?: string;
+          // ID of the conversation, to be able to continue a previous conversation @example my_conversation_1
+          conversation_id?: string;
+        }
+      >;
+      // Reloads the intent configuration.
+      reload: ServiceFunction<
+        object,
+        T,
+        {
+          // Language to clear cached intents for. Defaults to server language. @example NL
+          language?: string;
+          // Conversation agent to reload. @example homeassistant
+          agent_id?: string;
+        }
+      >;
     };
     tts: {
       // Speaks something using text-to-speech on a media player.
@@ -525,34 +553,6 @@ declare module "@hakit/core" {
           language?: string;
           //  @example platform specific
           options?: object;
-        }
-      >;
-    };
-    conversation: {
-      // Launches a conversation from a transcribed text.
-      process: ServiceFunction<
-        object,
-        T,
-        {
-          // Transcribed text input. @example Turn all lights on
-          text: string;
-          // Language of text. Defaults to server language. @example NL
-          language?: string;
-          // Conversation agent to process your request. The conversation agent is the brains of your assistant. It processes the incoming text commands. @example homeassistant
-          agent_id?: string;
-          // ID of the conversation, to be able to continue a previous conversation @example my_conversation_1
-          conversation_id?: string;
-        }
-      >;
-      // Reloads the intent configuration.
-      reload: ServiceFunction<
-        object,
-        T,
-        {
-          // Language to clear cached intents for. Defaults to server language. @example NL
-          language?: string;
-          // Conversation agent to reload. @example homeassistant
-          agent_id?: string;
         }
       >;
     };
@@ -644,23 +644,6 @@ declare module "@hakit/core" {
         }
       >;
     };
-    logbook: {
-      // Creates a custom entry in the logbook.
-      log: ServiceFunction<
-        object,
-        T,
-        {
-          // Custom name for an entity, can be referenced using the 'Entity ID' field. @example Kitchen
-          name: string;
-          // Message of the logbook entry. @example is being used
-          message: string;
-          // Entity to reference in the logbook entry.
-          entity_id?: string;
-          // Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry. @example light
-          domain?: string;
-        }
-      >;
-    };
     script: {
       //
       turnOffAllLights: ServiceFunction<object, T, object>;
@@ -720,19 +703,26 @@ declare module "@hakit/core" {
       // Decrements the current value by 1 step.
       decrement: ServiceFunction<object, T, object>;
     };
+    logbook: {
+      // Creates a custom entry in the logbook.
+      log: ServiceFunction<
+        object,
+        T,
+        {
+          // Custom name for an entity, can be referenced using the 'Entity ID' field. @example Kitchen
+          name: string;
+          // Message of the logbook entry. @example is being used
+          message: string;
+          // Entity to reference in the logbook entry.
+          entity_id?: string;
+          // Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry. @example light
+          domain?: string;
+        }
+      >;
+    };
     person: {
       // Reloads persons from the YAML-configuration.
       reload: ServiceFunction<object, T, object>;
-    };
-    inputBoolean: {
-      // Reloads helpers from the YAML-configuration.
-      reload: ServiceFunction<object, T, object>;
-      // Turns on the helper.
-      turnOn: ServiceFunction<object, T, object>;
-      // Turns off the helper.
-      turnOff: ServiceFunction<object, T, object>;
-      // Toggles the helper on/off.
-      toggle: ServiceFunction<object, T, object>;
     };
     inputSelect: {
       // Reloads helpers from the YAML-configuration.
@@ -778,9 +768,518 @@ declare module "@hakit/core" {
         }
       >;
     };
+    inputBoolean: {
+      // Reloads helpers from the YAML-configuration.
+      reload: ServiceFunction<object, T, object>;
+      // Turns on the helper.
+      turnOn: ServiceFunction<object, T, object>;
+      // Turns off the helper.
+      turnOff: ServiceFunction<object, T, object>;
+      // Toggles the helper on/off.
+      toggle: ServiceFunction<object, T, object>;
+    };
     zone: {
       // Reloads zones from the YAML-configuration.
       reload: ServiceFunction<object, T, object>;
+    };
+    schedule: {
+      // Reloads schedules from the YAML-configuration.
+      reload: ServiceFunction<object, T, object>;
+      // Retrieves the configured time ranges of one or multiple schedules.
+      getSchedule: ServiceFunction<object, T, object>;
+    };
+    zwaveJs: {
+      // Changes the configuration parameters of your Z-Wave devices.
+      setConfigParameter: ServiceFunction<
+        object,
+        T,
+        {
+          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
+          area_id?: unknown;
+          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
+          device_id?: string;
+          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
+          entity_id?: string;
+          // The configuration parameter's endpoint. @example 1
+          endpoint?: string;
+          // The name (or ID) of the configuration parameter you want to configure. @example Minimum brightness level
+          parameter: string;
+          // Target a specific bitmask (see the documentation for more information). Cannot be combined with 'Value size' or 'Value format'.
+          bitmask?: string;
+          // The new value to set for this configuration parameter. @example 5
+          value: string;
+          // Size of the value, either 1, 2, or 4. Used in combination with 'Value format' when a config parameter is not defined in your device's configuration file. Cannot be combined with 'Bitmask'. @example 1 @constraints  number: min: 1, max: 4
+          value_size?: number;
+          // Format of the value, 0 for signed integer, 1 for unsigned integer, 2 for enumerated, 3 for bitfield. Used in combination with 'Value size' when a config parameter is not defined in your device's configuration file. Cannot be combined with 'Bitmask'. @example 1 @constraints  number: min: 0, max: 3
+          value_format?: number;
+        }
+      >;
+      // Allows for bulk setting partial parameters. Useful when multiple partial parameters have to be set at the same time.
+      bulkSetPartialConfigParameters: ServiceFunction<
+        object,
+        T,
+        {
+          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
+          area_id?: unknown;
+          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
+          device_id?: string;
+          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
+          entity_id?: string;
+          // The configuration parameter's endpoint. @example 1
+          endpoint?: string;
+          // The name (or ID) of the configuration parameter you want to configure. @example 9
+          parameter: string;
+          // The new value(s) to set for this configuration parameter. Can either be a raw integer value to represent the bulk change or a mapping where the key is the bitmask (either in hex or integer form) and the value is the new value you want to set for that partial parameter. @example '0x1': 1 '0x10': 1 '0x20': 1 '0x40': 1
+          value: object;
+        }
+      >;
+      // Force updates the values of a Z-Wave entity.
+      refreshValue: ServiceFunction<
+        object,
+        T,
+        {
+          // Entities to refresh. @example - sensor.family_room_motion - switch.kitchen
+          entity_id: string;
+          // Whether to refresh all values or just the primary value.
+          refresh_all_values?: boolean;
+        }
+      >;
+      // Changes any value that Z-Wave recognizes on a Z-Wave device. This action has minimal validation so only use this action if you know what you are doing.
+      setValue: ServiceFunction<
+        object,
+        T,
+        {
+          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
+          area_id?: unknown;
+          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
+          device_id?: string;
+          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
+          entity_id?: string;
+          // The ID of the command class for the value. @example 117
+          command_class: string;
+          // The endpoint for the value. @example 1
+          endpoint?: string;
+          // The ID of the property for the value. @example currentValue
+          property: string;
+          // The ID of the property key for the value. @example 1
+          property_key?: string;
+          // The new value to set. @example ffbb99
+          value: object;
+          // Set value options map. Refer to the Z-Wave documentation for more information on what options can be set.
+          options?: object;
+          // Whether to wait for a response from the node. If not included in the payload, the integration will decide whether to wait or not. If enabled, the action can take a while if setting a value on an asleep battery device.
+          wait_for_result?: boolean;
+        }
+      >;
+      // Changes any value that Z-Wave recognizes on multiple Z-Wave devices using multicast, so all devices receive the message simultaneously. This action has minimal validation so only use this action if you know what you are doing.
+      multicastSetValue: ServiceFunction<
+        object,
+        T,
+        {
+          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
+          area_id?: unknown;
+          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
+          device_id?: string;
+          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
+          entity_id?: string;
+          // Whether the command should be broadcast to all devices on the network. @example true
+          broadcast?: boolean;
+          // The ID of the command class for the value. @example 117
+          command_class: string;
+          // The endpoint for the value. @example 1
+          endpoint?: string;
+          // The ID of the property for the value. @example currentValue
+          property: string;
+          // The ID of the property key for the value. @example 1
+          property_key?: string;
+          // Set value options map. Refer to the Z-Wave documentation for more information on what options can be set.
+          options?: object;
+          // The new value to set. @example ffbb99
+          value: object;
+        }
+      >;
+      // Forces Z-Wave to try to reach a node. This can be used to update the status of the node in Z-Wave when you think it doesn't accurately reflect reality, e.g. reviving a failed/dead node or marking the node as asleep.
+      ping: ServiceFunction<
+        object,
+        T,
+        {
+          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
+          area_id?: unknown;
+          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
+          device_id?: string;
+          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
+          entity_id?: string;
+        }
+      >;
+      // Calls a Command Class API on a node. Some Command Classes can't be fully controlled via the `set_value` action and require direct calls to the Command Class API.
+      invokeCcApi: ServiceFunction<
+        object,
+        T,
+        {
+          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
+          area_id?: unknown;
+          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
+          device_id?: string;
+          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
+          entity_id?: string;
+          // The ID of the command class that you want to issue a command to. @example 132
+          command_class: string;
+          // The endpoint to call the API on. If an endpoint is specified, that endpoint will be targeted for all nodes associated with the target areas, devices, and/or entities. If an endpoint is not specified, the root endpoint (0) will be targeted for nodes associated with target areas and devices, and the endpoint for the primary value of each entity will be targeted. @example 1
+          endpoint?: string;
+          // The name of the API method to call. Refer to the Z-Wave Command Class API documentation (https://zwave-js.github.io/node-zwave-js/#/api/CCs/index) for available methods. @example setInterval
+          method_name: string;
+          // A list of parameters to pass to the API method. Refer to the Z-Wave Command Class API documentation (https://zwave-js.github.io/node-zwave-js/#/api/CCs/index) for parameters. @example [1, 1]
+          parameters: object;
+        }
+      >;
+      // Refreshes notifications on a node based on notification type and optionally notification event.
+      refreshNotifications: ServiceFunction<
+        object,
+        T,
+        {
+          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
+          area_id?: unknown;
+          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
+          device_id?: string;
+          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
+          entity_id?: string;
+          // The Notification Type number as defined in the Z-Wave specs. @example 1 @constraints  number: min: 1, max: 22, mode: box
+          notification_type: number;
+          // The Notification Event number as defined in the Z-Wave specs. @example 1 @constraints  number: min: 1, max: 255, mode: box
+          notification_event?: number;
+        }
+      >;
+      // Sets a user code on a lock.
+      setLockUsercode: ServiceFunction<
+        object,
+        T,
+        {
+          // Code slot to set the code. @example 1
+          code_slot: string;
+          // Lock code to set. @example 1234
+          usercode: string;
+        }
+      >;
+      // Clears a user code from a lock.
+      clearLockUsercode: ServiceFunction<
+        object,
+        T,
+        {
+          // Code slot to clear code from. @example 1
+          code_slot: string;
+        }
+      >;
+      // Sets the configuration for a lock.
+      setLockConfiguration: ServiceFunction<
+        object,
+        T,
+        {
+          // The operation type of the lock. @example timed
+          operation_type: "constant" | "timed";
+          // Seconds until lock mode times out. Should only be used if operation type is `timed`. @example 1 @constraints  number: min: 0, max: 65535, unit_of_measurement: sec
+          lock_timeout?: number;
+          // Duration in seconds until lock returns to secure state. Only enforced when operation type is `constant`. @example 1 @constraints  number: min: 0, max: 65535, unit_of_measurement: sec
+          auto_relock_time?: number;
+          // Duration in seconds the latch stays retracted. @example 1 @constraints  number: min: 0, max: 65535, unit_of_measurement: sec
+          hold_and_release_time?: number;
+          // Whether the motor should help in locking and unlocking. @example true
+          twist_assist?: boolean;
+          // Whether the lock should run the motor until it hits resistance. @example true
+          block_to_block?: boolean;
+        }
+      >;
+      // Resets the meters on a node.
+      resetMeter: ServiceFunction<
+        object,
+        T,
+        {
+          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: entity: [object Object], multiple: true
+          area_id?: unknown;
+          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
+          device_id?: string;
+          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
+          entity_id?: string;
+          // The type of meter to reset. Not all meters support the ability to pick a meter type to reset. @example 1
+          meter_type?: string;
+          // The value that meters should be reset to. Not all meters support the ability to be reset to a specific value. @example 5
+          value?: string;
+        }
+      >;
+    };
+    pyscript: {
+      // Reloads all available pyscripts and restart triggers
+      reload: ServiceFunction<
+        object,
+        T,
+        {
+          // Only reload this specific global context (file or app) @example file.example
+          global_ctx?: string;
+        }
+      >;
+      // Starts a jupyter kernel for interactive use; Called by Jupyter front end and should generally not be used by users
+      jupyterKernelStart: ServiceFunction<
+        object,
+        T,
+        {
+          // Shell port number @example 63599 @constraints  number: min: 10240, max: 65535
+          shell_port?: number;
+          // IOPub port number @example 63598 @constraints  number: min: 10240, max: 65535
+          iopub_port?: number;
+          // Stdin port number @example 63597 @constraints  number: min: 10240, max: 65535
+          stdin_port?: number;
+          // Control port number @example 63596 @constraints  number: min: 10240, max: 65535
+          control_port?: number;
+          // Heartbeat port number @example 63595 @constraints  number: min: 10240, max: 65535
+          hb_port?: number;
+          // IP address to connect to Jupyter front end @example 127.0.0.1
+          ip?: string;
+          // Used for signing @example 012345678-9abcdef023456789abcdef
+          key: string;
+          // Transport type @example tcp
+          transport?: "tcp" | "udp";
+          // Signing algorithm @example hmac-sha256
+          signature_scheme?: "hmac-sha256";
+          // Kernel name @example pyscript
+          kernel_name: string;
+        }
+      >;
+    };
+    musicAssistant: {
+      // Performs a global search on the Music Assistant library and all providers.
+      search: ServiceFunction<
+        object,
+        T,
+        {
+          // Select the Music Assistant instance to perform the search on. @constraints  config_entry: integration: music_assistant
+          config_entry_id: unknown;
+          // The name/title to search for. @example We Are The Champions
+          name: string;
+          // The type of the content to search. Such as artist, album, track, radio, or playlist. All types if omitted. @example playlist
+          media_type?:
+            | "artist"
+            | "album"
+            | "audiobook"
+            | "playlist"
+            | "podcast"
+            | "track"
+            | "radio";
+          // When specifying a track or album name in the name field, you can optionally restrict results by this artist name. @example Queen
+          artist?: string;
+          // When specifying a track name in the name field, you can optionally restrict results by this album name. @example News of the world
+          album?: string;
+          // Maximum number of items to return (per media type). @example 25 @constraints  number: min: 1, max: 100, step: 1
+          limit?: number;
+          // Only include results that are in the library. @example true
+          library_only?: boolean;
+        }
+      >;
+      // Retrieves items from a Music Assistant library.
+      getLibrary: ServiceFunction<
+        object,
+        T,
+        {
+          // Select the Music Assistant instance to perform the search on. @constraints  config_entry: integration: music_assistant
+          config_entry_id: unknown;
+          // The media type for which to request details for. @example playlist
+          media_type:
+            | "artist"
+            | "album"
+            | "audiobook"
+            | "playlist"
+            | "podcast"
+            | "track"
+            | "radio";
+          // Filter items so only favorites items are returned. @example true
+          favorite?: boolean;
+          // Optional search string to search through this library. @example We Are The Champions
+          search?: string;
+          // Maximum number of items to return. @example 25 @constraints  number: min: 1, max: 500, step: 1
+          limit?: number;
+          // Offset to start the list from. @example 25 @constraints  number: min: 1, max: 1000000, step: 1
+          offset?: number;
+          // Sort the list by this field. @example random
+          order_by?:
+            | "name"
+            | "name_desc"
+            | "sort_name"
+            | "sort_name_desc"
+            | "timestamp_added"
+            | "timestamp_added_desc"
+            | "last_played"
+            | "last_played_desc"
+            | "play_count"
+            | "play_count_desc"
+            | "year"
+            | "year_desc"
+            | "position"
+            | "position_desc"
+            | "artist_name"
+            | "artist_name_desc"
+            | "random"
+            | "random_play_count";
+          // Filter albums by type. @example single
+          album_type?: "album" | "single" | "compilation" | "ep" | "unknown";
+          // Only return album artists when listing the artists library items. @example true
+          album_artists_only?: boolean;
+        }
+      >;
+      // Plays media on a Music Assistant player with more fine-grained control options.
+      playMedia: ServiceFunction<
+        object,
+        T,
+        {
+          // URI or name of the item you want to play. Specify a list if you want to play/enqueue multiple items. @example spotify://playlist/aabbccddeeff
+          media_id: object;
+          // The type of the content to play. Such as artist, album, track or playlist. Will be auto-determined if omitted. @example playlist
+          media_type?:
+            | "artist"
+            | "album"
+            | "audiobook"
+            | "folder"
+            | "playlist"
+            | "podcast"
+            | "track"
+            | "radio";
+          // When specifying a track or album by name in the Media ID field, you can optionally restrict results by this artist name. @example Queen
+          artist?: string;
+          // When specifying a track by name in the Media ID field, you can optionally restrict results by this album name. @example News of the world
+          album?: string;
+          // If the content should be played now or added to the queue.
+          enqueue?: "play" | "replace" | "next" | "replace_next" | "add";
+          // Enable radio mode to auto-generate a playlist based on the selection.
+          radio_mode?: boolean;
+        }
+      >;
+      // Plays an announcement on a Music Assistant player with more fine-grained control options.
+      playAnnouncement: ServiceFunction<
+        object,
+        T,
+        {
+          // URL to the notification sound. @example http://someremotesite.com/doorbell.mp3
+          url: string;
+          // Use pre-announcement sound for the announcement. Omit to use the player default. @example true
+          use_pre_announce?: boolean;
+          // Use a forced volume level for the announcement. Omit to use player default. @example 75 @constraints  number: min: 1, max: 100, step: 1
+          announce_volume?: number;
+        }
+      >;
+      // Transfers a player's queue to another player.
+      transferQueue: ServiceFunction<
+        object,
+        T,
+        {
+          // The source media player which has the queue you want to transfer. When omitted, the first playing player will be used.
+          source_player?: string;
+          // Start playing the queue on the target player. Omit to use the default behavior. @example true
+          auto_play?: boolean;
+        }
+      >;
+      // Retrieves the details of the currently active queue of a Music Assistant player.
+      getQueue: ServiceFunction<object, T, object>;
+    };
+    homekit: {
+      // Resets a HomeKit accessory.
+      resetAccessory: ServiceFunction<object, T, object>;
+      // Forcefully removes all pairings from an accessory to allow re-pairing. Use this action if the accessory is no longer responsive, and you want to avoid deleting and re-adding the entry. Room locations, and accessory preferences will be lost.
+      unpair: ServiceFunction<object, T, object>;
+      // Reloads HomeKit and re-processes the YAML-configuration.
+      reload: ServiceFunction<object, T, object>;
+    };
+    openaiConversation: {
+      // Sends a conversational query to ChatGPT including any attached image or PDF files
+      generateContent: ServiceFunction<
+        object,
+        T,
+        {
+          // The config entry to use for this action @constraints  config_entry: integration: openai_conversation
+          config_entry: unknown;
+          // The prompt to send @example Hello, how can I help you?
+          prompt: string;
+          // List of files to upload @example - /path/to/file1.txt - /path/to/file2.txt
+          filenames?: string;
+        }
+      >;
+      // Turns a prompt into an image
+      generateImage: ServiceFunction<
+        object,
+        T,
+        {
+          // The config entry to use for this action @constraints  config_entry: integration: openai_conversation
+          config_entry: unknown;
+          // The text to turn into an image @example A photo of a dog
+          prompt: string;
+          // The size of the image to generate @example 1024x1024
+          size?: "1024x1024" | "1024x1792" | "1792x1024";
+          // The quality of the image that will be generated @example standard
+          quality?: "standard" | "hd";
+          // The style of the generated image @example vivid
+          style?: "vivid" | "natural";
+        }
+      >;
+    };
+    cast: {
+      // Shows a dashboard view on a Chromecast device.
+      showLovelaceView: ServiceFunction<
+        object,
+        T,
+        {
+          // Media player entity to show the dashboard view on.
+          entity_id: string;
+          // The URL path of the dashboard to show, defaults to lovelace if not specified. @example lovelace-cast
+          dashboard_path?: string;
+          // The URL path of the dashboard view to show. @example downstairs
+          view_path: string;
+        }
+      >;
+    };
+    counter: {
+      // Increments a counter by its step size.
+      increment: ServiceFunction<object, T, object>;
+      // Decrements a counter by its step size.
+      decrement: ServiceFunction<object, T, object>;
+      // Resets a counter to its initial value.
+      reset: ServiceFunction<object, T, object>;
+      // Sets the counter to a specific value.
+      setValue: ServiceFunction<
+        object,
+        T,
+        {
+          // The new counter value the entity should be set to. @constraints  number: min: 0, max: 9223372036854776000, mode: box
+          value: number;
+        }
+      >;
+    };
+    inputDatetime: {
+      // Reloads helpers from the YAML-configuration.
+      reload: ServiceFunction<object, T, object>;
+      // Sets the date and/or time.
+      setDatetime: ServiceFunction<
+        object,
+        T,
+        {
+          // The target date. @example '2019-04-20'
+          date?: string;
+          // The target time. @example '05:04:20'
+          time?: string;
+          // The target date & time. @example '2019-04-20 05:04:20'
+          datetime?: string;
+          // The target date & time, expressed by a UNIX timestamp. @constraints  number: min: 0, max: 9223372036854776000, mode: box
+          timestamp?: number;
+        }
+      >;
+    };
+    inputText: {
+      // Reloads helpers from the YAML-configuration.
+      reload: ServiceFunction<object, T, object>;
+      // Sets the value.
+      setValue: ServiceFunction<
+        object,
+        T,
+        {
+          // The target value. @example This is an example text
+          value: string;
+        }
+      >;
     };
     shoppingList: {
       // Adds an item to the shopping list.
@@ -832,59 +1331,6 @@ declare module "@hakit/core" {
         {
           // Whether to sort in reverse (descending) order.
           reverse?: boolean;
-        }
-      >;
-    };
-    cast: {
-      // Shows a dashboard view on a Chromecast device.
-      showLovelaceView: ServiceFunction<
-        object,
-        T,
-        {
-          // Media player entity to show the dashboard view on.
-          entity_id: string;
-          // The URL path of the dashboard to show, defaults to lovelace if not specified. @example lovelace-cast
-          dashboard_path?: string;
-          // The URL path of the dashboard view to show. @example downstairs
-          view_path: string;
-        }
-      >;
-    };
-    pyscript: {
-      // Reloads all available pyscripts and restart triggers
-      reload: ServiceFunction<
-        object,
-        T,
-        {
-          // Only reload this specific global context (file or app) @example file.example
-          global_ctx?: string;
-        }
-      >;
-      // Starts a jupyter kernel for interactive use; Called by Jupyter front end and should generally not be used by users
-      jupyterKernelStart: ServiceFunction<
-        object,
-        T,
-        {
-          // Shell port number @example 63599 @constraints  number: min: 10240, max: 65535
-          shell_port?: number;
-          // IOPub port number @example 63598 @constraints  number: min: 10240, max: 65535
-          iopub_port?: number;
-          // Stdin port number @example 63597 @constraints  number: min: 10240, max: 65535
-          stdin_port?: number;
-          // Control port number @example 63596 @constraints  number: min: 10240, max: 65535
-          control_port?: number;
-          // Heartbeat port number @example 63595 @constraints  number: min: 10240, max: 65535
-          hb_port?: number;
-          // IP address to connect to Jupyter front end @example 127.0.0.1
-          ip?: string;
-          // Used for signing @example 012345678-9abcdef023456789abcdef
-          key: string;
-          // Transport type @example tcp
-          transport?: "tcp" | "udp";
-          // Signing algorithm @example hmac-sha256
-          signature_scheme?: "hmac-sha256";
-          // Kernel name @example pyscript
-          kernel_name: string;
         }
       >;
     };
@@ -1646,508 +2092,6 @@ declare module "@hakit/core" {
         }
       >;
     };
-    openaiConversation: {
-      // Sends a conversational query to ChatGPT including any attached image or PDF files
-      generateContent: ServiceFunction<
-        object,
-        T,
-        {
-          // The config entry to use for this action @constraints  config_entry: integration: openai_conversation
-          config_entry: unknown;
-          // The prompt to send @example Hello, how can I help you?
-          prompt: string;
-          // List of files to upload @example - /path/to/file1.txt - /path/to/file2.txt
-          filenames?: string;
-        }
-      >;
-      // Turns a prompt into an image
-      generateImage: ServiceFunction<
-        object,
-        T,
-        {
-          // The config entry to use for this action @constraints  config_entry: integration: openai_conversation
-          config_entry: unknown;
-          // The text to turn into an image @example A photo of a dog
-          prompt: string;
-          // The size of the image to generate @example 1024x1024
-          size?: "1024x1024" | "1024x1792" | "1792x1024";
-          // The quality of the image that will be generated @example standard
-          quality?: "standard" | "hd";
-          // The style of the generated image @example vivid
-          style?: "vivid" | "natural";
-        }
-      >;
-    };
-    inputDatetime: {
-      // Reloads helpers from the YAML-configuration.
-      reload: ServiceFunction<object, T, object>;
-      // Sets the date and/or time.
-      setDatetime: ServiceFunction<
-        object,
-        T,
-        {
-          // The target date. @example '2019-04-20'
-          date?: string;
-          // The target time. @example '05:04:20'
-          time?: string;
-          // The target date & time. @example '2019-04-20 05:04:20'
-          datetime?: string;
-          // The target date & time, expressed by a UNIX timestamp. @constraints  number: min: 0, max: 9223372036854776000, mode: box
-          timestamp?: number;
-        }
-      >;
-    };
-    schedule: {
-      // Reloads schedules from the YAML-configuration.
-      reload: ServiceFunction<object, T, object>;
-      // Retrieves the configured time ranges of one or multiple schedules.
-      getSchedule: ServiceFunction<object, T, object>;
-    };
-    counter: {
-      // Increments a counter by its step size.
-      increment: ServiceFunction<object, T, object>;
-      // Decrements a counter by its step size.
-      decrement: ServiceFunction<object, T, object>;
-      // Resets a counter to its initial value.
-      reset: ServiceFunction<object, T, object>;
-      // Sets the counter to a specific value.
-      setValue: ServiceFunction<
-        object,
-        T,
-        {
-          // The new counter value the entity should be set to. @constraints  number: min: 0, max: 9223372036854776000, mode: box
-          value: number;
-        }
-      >;
-    };
-    zwaveJs: {
-      // Changes the configuration parameters of your Z-Wave devices.
-      setConfigParameter: ServiceFunction<
-        object,
-        T,
-        {
-          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
-          area_id?: unknown;
-          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
-          device_id?: string;
-          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
-          entity_id?: string;
-          // The configuration parameter's endpoint. @example 1
-          endpoint?: string;
-          // The name (or ID) of the configuration parameter you want to configure. @example Minimum brightness level
-          parameter: string;
-          // Target a specific bitmask (see the documentation for more information). Cannot be combined with 'Value size' or 'Value format'.
-          bitmask?: string;
-          // The new value to set for this configuration parameter. @example 5
-          value: string;
-          // Size of the value, either 1, 2, or 4. Used in combination with 'Value format' when a config parameter is not defined in your device's configuration file. Cannot be combined with 'Bitmask'. @example 1 @constraints  number: min: 1, max: 4
-          value_size?: number;
-          // Format of the value, 0 for signed integer, 1 for unsigned integer, 2 for enumerated, 3 for bitfield. Used in combination with 'Value size' when a config parameter is not defined in your device's configuration file. Cannot be combined with 'Bitmask'. @example 1 @constraints  number: min: 0, max: 3
-          value_format?: number;
-        }
-      >;
-      // Allows for bulk setting partial parameters. Useful when multiple partial parameters have to be set at the same time.
-      bulkSetPartialConfigParameters: ServiceFunction<
-        object,
-        T,
-        {
-          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
-          area_id?: unknown;
-          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
-          device_id?: string;
-          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
-          entity_id?: string;
-          // The configuration parameter's endpoint. @example 1
-          endpoint?: string;
-          // The name (or ID) of the configuration parameter you want to configure. @example 9
-          parameter: string;
-          // The new value(s) to set for this configuration parameter. Can either be a raw integer value to represent the bulk change or a mapping where the key is the bitmask (either in hex or integer form) and the value is the new value you want to set for that partial parameter. @example '0x1': 1 '0x10': 1 '0x20': 1 '0x40': 1
-          value: object;
-        }
-      >;
-      // Force updates the values of a Z-Wave entity.
-      refreshValue: ServiceFunction<
-        object,
-        T,
-        {
-          // Entities to refresh. @example - sensor.family_room_motion - switch.kitchen
-          entity_id: string;
-          // Whether to refresh all values or just the primary value.
-          refresh_all_values?: boolean;
-        }
-      >;
-      // Changes any value that Z-Wave recognizes on a Z-Wave device. This action has minimal validation so only use this action if you know what you are doing.
-      setValue: ServiceFunction<
-        object,
-        T,
-        {
-          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
-          area_id?: unknown;
-          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
-          device_id?: string;
-          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
-          entity_id?: string;
-          // The ID of the command class for the value. @example 117
-          command_class: string;
-          // The endpoint for the value. @example 1
-          endpoint?: string;
-          // The ID of the property for the value. @example currentValue
-          property: string;
-          // The ID of the property key for the value. @example 1
-          property_key?: string;
-          // The new value to set. @example ffbb99
-          value: object;
-          // Set value options map. Refer to the Z-Wave documentation for more information on what options can be set.
-          options?: object;
-          // Whether to wait for a response from the node. If not included in the payload, the integration will decide whether to wait or not. If enabled, the action can take a while if setting a value on an asleep battery device.
-          wait_for_result?: boolean;
-        }
-      >;
-      // Changes any value that Z-Wave recognizes on multiple Z-Wave devices using multicast, so all devices receive the message simultaneously. This action has minimal validation so only use this action if you know what you are doing.
-      multicastSetValue: ServiceFunction<
-        object,
-        T,
-        {
-          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
-          area_id?: unknown;
-          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
-          device_id?: string;
-          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
-          entity_id?: string;
-          // Whether the command should be broadcast to all devices on the network. @example true
-          broadcast?: boolean;
-          // The ID of the command class for the value. @example 117
-          command_class: string;
-          // The endpoint for the value. @example 1
-          endpoint?: string;
-          // The ID of the property for the value. @example currentValue
-          property: string;
-          // The ID of the property key for the value. @example 1
-          property_key?: string;
-          // Set value options map. Refer to the Z-Wave documentation for more information on what options can be set.
-          options?: object;
-          // The new value to set. @example ffbb99
-          value: object;
-        }
-      >;
-      // Forces Z-Wave to try to reach a node. This can be used to update the status of the node in Z-Wave when you think it doesn't accurately reflect reality, e.g. reviving a failed/dead node or marking the node as asleep.
-      ping: ServiceFunction<
-        object,
-        T,
-        {
-          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
-          area_id?: unknown;
-          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
-          device_id?: string;
-          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
-          entity_id?: string;
-        }
-      >;
-      // Calls a Command Class API on a node. Some Command Classes can't be fully controlled via the `set_value` action and require direct calls to the Command Class API.
-      invokeCcApi: ServiceFunction<
-        object,
-        T,
-        {
-          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
-          area_id?: unknown;
-          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
-          device_id?: string;
-          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
-          entity_id?: string;
-          // The ID of the command class that you want to issue a command to. @example 132
-          command_class: string;
-          // The endpoint to call the API on. If an endpoint is specified, that endpoint will be targeted for all nodes associated with the target areas, devices, and/or entities. If an endpoint is not specified, the root endpoint (0) will be targeted for nodes associated with target areas and devices, and the endpoint for the primary value of each entity will be targeted. @example 1
-          endpoint?: string;
-          // The name of the API method to call. Refer to the Z-Wave Command Class API documentation (https://zwave-js.github.io/node-zwave-js/#/api/CCs/index) for available methods. @example setInterval
-          method_name: string;
-          // A list of parameters to pass to the API method. Refer to the Z-Wave Command Class API documentation (https://zwave-js.github.io/node-zwave-js/#/api/CCs/index) for parameters. @example [1, 1]
-          parameters: object;
-        }
-      >;
-      // Refreshes notifications on a node based on notification type and optionally notification event.
-      refreshNotifications: ServiceFunction<
-        object,
-        T,
-        {
-          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: device: [object Object], multiple: true
-          area_id?: unknown;
-          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
-          device_id?: string;
-          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
-          entity_id?: string;
-          // The Notification Type number as defined in the Z-Wave specs. @example 1 @constraints  number: min: 1, max: 22, mode: box
-          notification_type: number;
-          // The Notification Event number as defined in the Z-Wave specs. @example 1 @constraints  number: min: 1, max: 255, mode: box
-          notification_event?: number;
-        }
-      >;
-      // Sets a user code on a lock.
-      setLockUsercode: ServiceFunction<
-        object,
-        T,
-        {
-          // Code slot to set the code. @example 1
-          code_slot: string;
-          // Lock code to set. @example 1234
-          usercode: string;
-        }
-      >;
-      // Clears a user code from a lock.
-      clearLockUsercode: ServiceFunction<
-        object,
-        T,
-        {
-          // Code slot to clear code from. @example 1
-          code_slot: string;
-        }
-      >;
-      // Sets the configuration for a lock.
-      setLockConfiguration: ServiceFunction<
-        object,
-        T,
-        {
-          // The operation type of the lock. @example timed
-          operation_type: "constant" | "timed";
-          // Seconds until lock mode times out. Should only be used if operation type is `timed`. @example 1 @constraints  number: min: 0, max: 65535, unit_of_measurement: sec
-          lock_timeout?: number;
-          // Duration in seconds until lock returns to secure state. Only enforced when operation type is `constant`. @example 1 @constraints  number: min: 0, max: 65535, unit_of_measurement: sec
-          auto_relock_time?: number;
-          // Duration in seconds the latch stays retracted. @example 1 @constraints  number: min: 0, max: 65535, unit_of_measurement: sec
-          hold_and_release_time?: number;
-          // Whether the motor should help in locking and unlocking. @example true
-          twist_assist?: boolean;
-          // Whether the lock should run the motor until it hits resistance. @example true
-          block_to_block?: boolean;
-        }
-      >;
-      // Resets the meters on a node.
-      resetMeter: ServiceFunction<
-        object,
-        T,
-        {
-          // The area(s) to target for this action. If an area is specified, all Z-Wave devices and entities in that area will be targeted for this action. @example living_room @constraints  area: entity: [object Object], multiple: true
-          area_id?: unknown;
-          // The device(s) to target for this action. @example 8f4219cfa57e23f6f669c4616c2205e2
-          device_id?: string;
-          // The entity ID(s) to target for this action. @example sensor.living_room_temperature
-          entity_id?: string;
-          // The type of meter to reset. Not all meters support the ability to pick a meter type to reset. @example 1
-          meter_type?: string;
-          // The value that meters should be reset to. Not all meters support the ability to be reset to a specific value. @example 5
-          value?: string;
-        }
-      >;
-    };
-    inputText: {
-      // Reloads helpers from the YAML-configuration.
-      reload: ServiceFunction<object, T, object>;
-      // Sets the value.
-      setValue: ServiceFunction<
-        object,
-        T,
-        {
-          // The target value. @example This is an example text
-          value: string;
-        }
-      >;
-    };
-    musicAssistant: {
-      // Performs a global search on the Music Assistant library and all providers.
-      search: ServiceFunction<
-        object,
-        T,
-        {
-          // Select the Music Assistant instance to perform the search on. @constraints  config_entry: integration: music_assistant
-          config_entry_id: unknown;
-          // The name/title to search for. @example We Are The Champions
-          name: string;
-          // The type of the content to search. Such as artist, album, track, radio, or playlist. All types if omitted. @example playlist
-          media_type?:
-            | "artist"
-            | "album"
-            | "audiobook"
-            | "playlist"
-            | "podcast"
-            | "track"
-            | "radio";
-          // When specifying a track or album name in the name field, you can optionally restrict results by this artist name. @example Queen
-          artist?: string;
-          // When specifying a track name in the name field, you can optionally restrict results by this album name. @example News of the world
-          album?: string;
-          // Maximum number of items to return (per media type). @example 25 @constraints  number: min: 1, max: 100, step: 1
-          limit?: number;
-          // Only include results that are in the library. @example true
-          library_only?: boolean;
-        }
-      >;
-      // Retrieves items from a Music Assistant library.
-      getLibrary: ServiceFunction<
-        object,
-        T,
-        {
-          // Select the Music Assistant instance to perform the search on. @constraints  config_entry: integration: music_assistant
-          config_entry_id: unknown;
-          // The media type for which to request details for. @example playlist
-          media_type:
-            | "artist"
-            | "album"
-            | "audiobook"
-            | "playlist"
-            | "podcast"
-            | "track"
-            | "radio";
-          // Filter items so only favorites items are returned. @example true
-          favorite?: boolean;
-          // Optional search string to search through this library. @example We Are The Champions
-          search?: string;
-          // Maximum number of items to return. @example 25 @constraints  number: min: 1, max: 500, step: 1
-          limit?: number;
-          // Offset to start the list from. @example 25 @constraints  number: min: 1, max: 1000000, step: 1
-          offset?: number;
-          // Sort the list by this field. @example random
-          order_by?:
-            | "name"
-            | "name_desc"
-            | "sort_name"
-            | "sort_name_desc"
-            | "timestamp_added"
-            | "timestamp_added_desc"
-            | "last_played"
-            | "last_played_desc"
-            | "play_count"
-            | "play_count_desc"
-            | "year"
-            | "year_desc"
-            | "position"
-            | "position_desc"
-            | "artist_name"
-            | "artist_name_desc"
-            | "random"
-            | "random_play_count";
-          // Filter albums by type. @example single
-          album_type?: "album" | "single" | "compilation" | "ep" | "unknown";
-          // Only return album artists when listing the artists library items. @example true
-          album_artists_only?: boolean;
-        }
-      >;
-      // Plays media on a Music Assistant player with more fine-grained control options.
-      playMedia: ServiceFunction<
-        object,
-        T,
-        {
-          // URI or name of the item you want to play. Specify a list if you want to play/enqueue multiple items. @example spotify://playlist/aabbccddeeff
-          media_id: object;
-          // The type of the content to play. Such as artist, album, track or playlist. Will be auto-determined if omitted. @example playlist
-          media_type?:
-            | "artist"
-            | "album"
-            | "audiobook"
-            | "folder"
-            | "playlist"
-            | "podcast"
-            | "track"
-            | "radio";
-          // When specifying a track or album by name in the Media ID field, you can optionally restrict results by this artist name. @example Queen
-          artist?: string;
-          // When specifying a track by name in the Media ID field, you can optionally restrict results by this album name. @example News of the world
-          album?: string;
-          // If the content should be played now or added to the queue.
-          enqueue?: "play" | "replace" | "next" | "replace_next" | "add";
-          // Enable radio mode to auto-generate a playlist based on the selection.
-          radio_mode?: boolean;
-        }
-      >;
-      // Plays an announcement on a Music Assistant player with more fine-grained control options.
-      playAnnouncement: ServiceFunction<
-        object,
-        T,
-        {
-          // URL to the notification sound. @example http://someremotesite.com/doorbell.mp3
-          url: string;
-          // Use pre-announcement sound for the announcement. Omit to use the player default. @example true
-          use_pre_announce?: boolean;
-          // Use a forced volume level for the announcement. Omit to use player default. @example 75 @constraints  number: min: 1, max: 100, step: 1
-          announce_volume?: number;
-        }
-      >;
-      // Transfers a player's queue to another player.
-      transferQueue: ServiceFunction<
-        object,
-        T,
-        {
-          // The source media player which has the queue you want to transfer. When omitted, the first playing player will be used.
-          source_player?: string;
-          // Start playing the queue on the target player. Omit to use the default behavior. @example true
-          auto_play?: boolean;
-        }
-      >;
-      // Retrieves the details of the currently active queue of a Music Assistant player.
-      getQueue: ServiceFunction<object, T, object>;
-    };
-    homekit: {
-      // Resets a HomeKit accessory.
-      resetAccessory: ServiceFunction<object, T, object>;
-      // Forcefully removes all pairings from an accessory to allow re-pairing. Use this action if the accessory is no longer responsive, and you want to avoid deleting and re-adding the entry. Room locations, and accessory preferences will be lost.
-      unpair: ServiceFunction<object, T, object>;
-      // Reloads HomeKit and re-processes the YAML-configuration.
-      reload: ServiceFunction<object, T, object>;
-    };
-    todo: {
-      // Adds a new to-do list item.
-      addItem: ServiceFunction<
-        object,
-        T,
-        {
-          // The name that represents the to-do item. @example Submit income tax return
-          item: string;
-          // The date the to-do item is expected to be completed. @example 2023-11-17
-          due_date?: string;
-          // The date and time the to-do item is expected to be completed. @example 2023-11-17 13:30:00
-          due_datetime?: string;
-          // A more complete description of the to-do item than provided by the item name. @example A more complete description of the to-do item than that provided by the summary.
-          description?: string;
-        }
-      >;
-      // Updates an existing to-do list item based on its name or UID.
-      updateItem: ServiceFunction<
-        object,
-        T,
-        {
-          // The name/summary of the to-do item. If you have items with duplicate names, you can reference specific ones using their UID instead. @example Submit income tax return
-          item: string;
-          // The new name for the to-do item @example Something else
-          rename?: string;
-          // A status or confirmation of the to-do item. @example needs_action
-          status?: "needs_action" | "completed";
-          // The date the to-do item is expected to be completed. @example 2023-11-17
-          due_date?: string;
-          // The date and time the to-do item is expected to be completed. @example 2023-11-17 13:30:00
-          due_datetime?: string;
-          // A more complete description of the to-do item than provided by the item name. @example A more complete description of the to-do item than that provided by the summary.
-          description?: string;
-        }
-      >;
-      // Removes an existing to-do list item by its name or UID.
-      removeItem: ServiceFunction<
-        object,
-        T,
-        {
-          // The name/summary of the to-do item. If you have items with duplicate names, you can reference specific ones using their UID instead. @example Submit income tax return
-          item: string;
-        }
-      >;
-      // Gets items on a to-do list.
-      getItems: ServiceFunction<
-        object,
-        T,
-        {
-          // Only return to-do items with the specified statuses. Returns not completed actions by default. @example needs_action
-          status?: "needs_action" | "completed";
-        }
-      >;
-      // Removes all to-do list items that have been completed.
-      removeCompletedItems: ServiceFunction<object, T, object>;
-    };
     notify: {
       // Sends a notification message.
       sendMessage: ServiceFunction<
@@ -2218,21 +2162,6 @@ declare module "@hakit/core" {
           data?: object;
         }
       >;
-      // Sends a notification message using the mobile_app_tb330fu integration.
-      mobileAppTb330Fu: ServiceFunction<
-        object,
-        T,
-        {
-          //  @example The garage door has been open for 10 minutes.
-          message: string;
-          //  @example Your Garage Door Friend
-          title?: string;
-          //  @example platform specific
-          target?: object;
-          //  @example platform specific
-          data?: object;
-        }
-      >;
       // Sends a notification message using the mobile_app_iphone_machome integration.
       mobileAppIphoneMachome: ServiceFunction<
         object,
@@ -2265,6 +2194,21 @@ declare module "@hakit/core" {
       >;
       // Sends a notification message using the notify service.
       notify: ServiceFunction<
+        object,
+        T,
+        {
+          //  @example The garage door has been open for 10 minutes.
+          message: string;
+          //  @example Your Garage Door Friend
+          title?: string;
+          //  @example platform specific
+          target?: object;
+          //  @example platform specific
+          data?: object;
+        }
+      >;
+      // Sends a notification message using the mobile_app_tb330fu integration.
+      mobileAppTb330Fu: ServiceFunction<
         object,
         T,
         {
@@ -2346,6 +2290,62 @@ declare module "@hakit/core" {
       turnOff: ServiceFunction<object, T, object>;
       // Toggles the siren on/off.
       toggle: ServiceFunction<object, T, object>;
+    };
+    todo: {
+      // Adds a new to-do list item.
+      addItem: ServiceFunction<
+        object,
+        T,
+        {
+          // The name that represents the to-do item. @example Submit income tax return
+          item: string;
+          // The date the to-do item is expected to be completed. @example 2023-11-17
+          due_date?: string;
+          // The date and time the to-do item is expected to be completed. @example 2023-11-17 13:30:00
+          due_datetime?: string;
+          // A more complete description of the to-do item than provided by the item name. @example A more complete description of the to-do item than that provided by the summary.
+          description?: string;
+        }
+      >;
+      // Updates an existing to-do list item based on its name or UID.
+      updateItem: ServiceFunction<
+        object,
+        T,
+        {
+          // The name/summary of the to-do item. If you have items with duplicate names, you can reference specific ones using their UID instead. @example Submit income tax return
+          item: string;
+          // The new name for the to-do item @example Something else
+          rename?: string;
+          // A status or confirmation of the to-do item. @example needs_action
+          status?: "needs_action" | "completed";
+          // The date the to-do item is expected to be completed. @example 2023-11-17
+          due_date?: string;
+          // The date and time the to-do item is expected to be completed. @example 2023-11-17 13:30:00
+          due_datetime?: string;
+          // A more complete description of the to-do item than provided by the item name. @example A more complete description of the to-do item than that provided by the summary.
+          description?: string;
+        }
+      >;
+      // Removes an existing to-do list item by its name or UID.
+      removeItem: ServiceFunction<
+        object,
+        T,
+        {
+          // The name/summary of the to-do item. If you have items with duplicate names, you can reference specific ones using their UID instead. @example Submit income tax return
+          item: string;
+        }
+      >;
+      // Gets items on a to-do list.
+      getItems: ServiceFunction<
+        object,
+        T,
+        {
+          // Only return to-do items with the specified statuses. Returns not completed actions by default. @example needs_action
+          status?: "needs_action" | "completed";
+        }
+      >;
+      // Removes all to-do list items that have been completed.
+      removeCompletedItems: ServiceFunction<object, T, object>;
     };
     weather: {
       // Retrieves the forecast from selected weather services.
@@ -2651,8 +2651,8 @@ declare module "@hakit/core" {
       | "script.turn_off_all_lights"
       | "script.turn_off_all_lights_outside"
       | "person.pinesmart"
-      | "input_boolean.lights_turning_off"
       | "input_select.spotify_tracks"
+      | "input_boolean.lights_turning_off"
       | "zone.seng_house"
       | "zone.home"
       | "sun.sun"
@@ -2662,10 +2662,7 @@ declare module "@hakit/core" {
       | "sensor.sun_next_noon"
       | "sensor.sun_next_rising"
       | "sensor.sun_next_setting"
-      | "todo.shopping_list"
       | "camera.door_bird"
-      | "media_player.basement_tv"
-      | "tts.google_translate_en_com"
       | "device_tracker.iphone"
       | "sensor.iphone_battery_state"
       | "sensor.iphone_storage"
@@ -2709,9 +2706,6 @@ declare module "@hakit/core" {
       | "sensor.ragnarocl_last_update_trigger"
       | "sensor.ragnarocl_audio_output"
       | "device_tracker.tablet"
-      | "sensor.tb330fu_battery_level"
-      | "sensor.tb330fu_battery_state"
-      | "sensor.tb330fu_charger_type"
       | "device_tracker.iphone_machome"
       | "sensor.iphone_machome_battery_level"
       | "sensor.iphone_machome_storage"
@@ -2774,13 +2768,42 @@ declare module "@hakit/core" {
       | "device_tracker.abu_iphone"
       | "device_tracker.hs103"
       | "device_tracker.34_7d_e4_29_6e_1e"
-      | "binary_sensor.cgm4981com_wan_status"
-      | "sensor.cgm4981com_external_ip"
-      | "sensor.cgm4981com_download_speed"
-      | "sensor.cgm4981com_upload_speed"
-      | "conversation.chatgpt"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_discussions"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_stars"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_watchers"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_forks"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_issues"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_pull_requests"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_commit"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_discussion"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_release"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_issue"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_pull_request"
+      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_tag"
+      | "update.pi_hole_card_update"
+      | "update.browser_mod_update"
+      | "update.kiosk_mode_update"
+      | "update.layout_card_update"
+      | "update.lifesmart_update"
+      | "update.network_scanner_update"
+      | "update.mini_media_player_update"
+      | "update.auto_reload_update"
+      | "update.pyscript_update"
+      | "update.mushroom_update"
+      | "update.digital_clock_update"
+      | "update.bubble_card_update"
+      | "update.sip_core_update"
+      | "update.wall_clock_card_update"
+      | "update.blue_theme_by_taikun114_update"
+      | "update.green_and_dark_theme_simple_clean_and_green_update"
+      | "update.wallpanel_update"
+      | "update.slider_entity_row_update"
+      | "update.hacs_update"
+      | "update.button_card_update"
+      | "update.clock_weather_card_update"
+      | "update.card_mod_update"
+      | "update.custom_sidebar_update"
       | "sensor.800_series_long_range_usb_controller_status"
-      | "weather.forecast_home"
       | "sensor.node_3_node_status"
       | "button.node_3_ping"
       | "sensor.node_3_last_seen"
@@ -2802,6 +2825,18 @@ declare module "@hakit/core" {
       | "sensor.node_9_node_status"
       | "button.node_9_ping"
       | "sensor.node_9_last_seen"
+      | "sensor.node_10_node_status"
+      | "button.node_10_ping"
+      | "sensor.node_10_last_seen"
+      | "sensor.node_11_node_status"
+      | "button.node_11_ping"
+      | "sensor.node_11_last_seen"
+      | "sensor.node_12_node_status"
+      | "button.node_12_ping"
+      | "sensor.node_12_last_seen"
+      | "sensor.node_13_node_status"
+      | "button.node_13_ping"
+      | "sensor.node_13_last_seen"
       | "light.in_wall_600w_dimmer_2"
       | "event.in_wall_600w_dimmer_scene_id_2"
       | "light.in_wall_600w_dimmer_3"
@@ -2816,44 +2851,6 @@ declare module "@hakit/core" {
       | "event.in_wall_600w_dimmer_scene_id_7"
       | "light.in_wall_600w_dimmer_8"
       | "event.in_wall_600w_dimmer_scene_id_8"
-      | "binary_sensor.rpi_power_status"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_discussions"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_stars"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_watchers"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_forks"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_issues"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_pull_requests"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_commit"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_discussion"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_release"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_issue"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_pull_request"
-      | "sensor.nikitaaovramenko_turn_off_lights_app_script_latest_tag"
-      | "sensor.node_10_node_status"
-      | "button.node_10_ping"
-      | "sensor.node_10_last_seen"
-      | "sensor.node_11_node_status"
-      | "button.node_11_ping"
-      | "sensor.node_11_last_seen"
-      | "sensor.node_12_node_status"
-      | "button.node_12_ping"
-      | "sensor.node_12_last_seen"
-      | "sensor.node_13_node_status"
-      | "button.node_13_ping"
-      | "sensor.node_13_last_seen"
-      | "sensor.node_14_node_status"
-      | "button.node_14_ping"
-      | "sensor.node_14_last_seen"
-      | "sensor.node_15_node_status"
-      | "button.node_15_ping"
-      | "sensor.node_15_last_seen"
-      | "update.in_wall_600w_dimmer_firmware_2"
-      | "update.in_wall_600w_dimmer_firmware_3"
-      | "update.in_wall_600w_dimmer_firmware_4"
-      | "update.in_wall_600w_dimmer_firmware_5"
-      | "update.in_wall_600w_dimmer_firmware_6"
-      | "update.in_wall_600w_dimmer_firmware_7"
-      | "update.in_wall_600w_dimmer_firmware_8"
       | "light.in_wall_600w_dimmer_9"
       | "event.in_wall_600w_dimmer_scene_id_9"
       | "light.in_wall_600w_dimmer_10"
@@ -2862,16 +2859,13 @@ declare module "@hakit/core" {
       | "event.in_wall_600w_dimmer_scene_id_11"
       | "light.in_wall_600w_dimmer_12"
       | "event.in_wall_600w_dimmer_scene_id_12"
-      | "light.in_wall_600w_dimmer_13"
-      | "event.in_wall_600w_dimmer_scene_id_13"
-      | "light.in_wall_600w_dimmer_14"
-      | "event.in_wall_600w_dimmer_scene_id_14"
-      | "update.in_wall_600w_dimmer_firmware_9"
-      | "update.in_wall_600w_dimmer_firmware_10"
-      | "update.in_wall_600w_dimmer_firmware_11"
-      | "update.in_wall_600w_dimmer_firmware_12"
-      | "update.in_wall_600w_dimmer_firmware_13"
-      | "update.in_wall_600w_dimmer_firmware_14"
+      | "sensor.node_14_node_status"
+      | "button.node_14_ping"
+      | "sensor.node_14_last_seen"
+      | "sensor.node_15_node_status"
+      | "button.node_15_ping"
+      | "sensor.node_15_last_seen"
+      | "conversation.chatgpt"
       | "button.doorbird_relay_1"
       | "button.doorbird_ir"
       | "button.doorbird_reset_favorites"
@@ -2881,29 +2875,32 @@ declare module "@hakit/core" {
       | "event.doorbird_doorstation_1ccae370b5f8_doorbell"
       | "event.doorbird_doorbell_doorbell"
       | "event.doorbird_doorbell"
-      | "update.clock_weather_card_update"
-      | "update.green_and_dark_theme_simple_clean_and_green_update"
-      | "update.digital_clock_update"
-      | "update.wall_clock_card_update"
-      | "update.card_mod_update"
-      | "update.blue_theme_by_taikun114_update"
-      | "update.lifesmart_update"
-      | "update.bubble_card_update"
-      | "update.pi_hole_card_update"
-      | "update.pyscript_update"
-      | "update.mushroom_update"
-      | "update.sip_core_update"
-      | "update.mini_media_player_update"
-      | "update.kiosk_mode_update"
-      | "update.network_scanner_update"
-      | "update.auto_reload_update"
-      | "update.hacs_update"
-      | "update.browser_mod_update"
-      | "update.button_card_update"
-      | "update.custom_sidebar_update"
-      | "update.slider_entity_row_update"
-      | "update.wallpanel_update"
-      | "update.layout_card_update"
+      | "binary_sensor.cgm4981com_wan_status"
+      | "sensor.cgm4981com_external_ip"
+      | "sensor.cgm4981com_download_speed"
+      | "sensor.cgm4981com_upload_speed"
+      | "light.in_wall_600w_dimmer_13"
+      | "event.in_wall_600w_dimmer_scene_id_13"
+      | "light.in_wall_600w_dimmer_14"
+      | "event.in_wall_600w_dimmer_scene_id_14"
+      | "update.in_wall_600w_dimmer_firmware_2"
+      | "update.in_wall_600w_dimmer_firmware_3"
+      | "update.in_wall_600w_dimmer_firmware_4"
+      | "update.in_wall_600w_dimmer_firmware_5"
+      | "update.in_wall_600w_dimmer_firmware_6"
+      | "update.in_wall_600w_dimmer_firmware_7"
+      | "update.in_wall_600w_dimmer_firmware_8"
+      | "update.in_wall_600w_dimmer_firmware_9"
+      | "update.in_wall_600w_dimmer_firmware_10"
+      | "update.in_wall_600w_dimmer_firmware_11"
+      | "update.in_wall_600w_dimmer_firmware_12"
+      | "update.in_wall_600w_dimmer_firmware_13"
+      | "update.in_wall_600w_dimmer_firmware_14"
+      | "binary_sensor.rpi_power_status"
+      | "media_player.basement_tv"
+      | "tts.google_translate_en_com"
+      | "todo.shopping_list"
+      | "weather.forecast_home"
       | "sensor.bubble_card_modules"
       | "automation.waterleak_test"
       | "automation.water_leak_valve_automatiom"
@@ -2968,6 +2965,9 @@ declare module "@hakit/core" {
       | "media_player.googlenestpoint7930"
       | "media_player.googlenestpoint7b47"
       | "media_player.great_room_display"
-      | "media_player.googlenestpoint7930_2";
+      | "media_player.googlenestpoint7930_2"
+      | "sensor.tb330fu_battery_level"
+      | "sensor.tb330fu_battery_state"
+      | "sensor.tb330fu_charger_type";
   }
 }

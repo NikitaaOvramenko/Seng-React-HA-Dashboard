@@ -156,3 +156,55 @@ html, body {
     @apply font-sans;
   }
 }
+
+/* Spotlight background */
+.spotlight-container {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--bg-page);
+  overflow: hidden;
+}
+
+.spotlight-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.spotlight-content {
+  position: relative;
+  z-index: 1;
+}
+
+.spotlight {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+}
+
+.spotlight-left {
+  width: 60vw;
+  height: 60vw;
+  top: 10%;
+  left: 10%;
+  background: radial-gradient(circle, rgba(14, 6, 88, 0.7) 0%, transparent 70%);
+}
+
+.spotlight-mid {
+  width: 50vw;
+  height: 50vw;
+  top: 40%;
+  left: 30%;
+  background: radial-gradient(circle, rgba(178, 184, 249, 0.7) 0%, transparent 70%);
+}
+
+.spotlight-right {
+  width: 55vw;
+  height: 55vw;
+  top: 20%;
+  right: 5%;
+  background: radial-gradient(circle, rgba(20, 13, 114, 0.7) 0%, transparent 70%);
+}

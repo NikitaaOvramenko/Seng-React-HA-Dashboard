@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Cctv, House, Trees } from "lucide-react";
+import { Cctv, House, Trees, RotateCcw } from "lucide-react";
 
 const navItems = [
   { id: 1, link: "/doorbird", label: "DoorBird", icon: Cctv },
@@ -42,6 +42,22 @@ const Navbar = () => {
               </Link>
             );
           })}
+          <button
+            onClick={async () => {
+              const keys = await caches.keys();
+              await Promise.all(keys.map((k) => caches.delete(k)));
+              window.location.reload();
+            }}
+            className="flex-1"
+          >
+            <div className="flex flex-col items-center gap-1.5 py-3.5 px-2 transition-all text-zinc-600 hover:text-zinc-300">
+              <RotateCcw size={20} strokeWidth={1.8} />
+              <span className="text-xs font-semibold leading-none tracking-wide">
+                Reload
+              </span>
+              <div className="mt-0.5 h-1 w-4 rounded-full opacity-0" />
+            </div>
+          </button>
         </div>
       </div>
     </div>

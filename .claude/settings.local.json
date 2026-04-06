@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(tree -L 3 -I 'node_modules' //wsl.localhost/Ubuntu/home/ovram/Seng-React-HA-Dashboard/src)",
-      "Read(///wsl.localhost/Ubuntu/home/ovram/Seng-React-HA-Dashboard/**)"
+      "Read(///wsl.localhost/Ubuntu/home/ovram/Seng-React-HA-Dashboard/**)",
+      "Bash(wsl -- ls /home/ovram/Seng-React-HA-Dashboard/node_modules/@hakit/components/dist/)"
     ]
   }
 }
