@@ -82,27 +82,28 @@ export default function Screensaver() {
           : "pointer-events-none opacity-0"
       }`}
     >
-      <Meteors className="z-10 pointer-events-none" />
+      {ctx.curTime === 0 && <Meteors className="z-10 pointer-events-none" />}
 
       <div className="relative z-20 flex flex-col items-center gap-6 px-4 pointer-events-none">
         <div className="flex flex-col items-center">
           <div className="flex items-end gap-2 tabular-nums">
             <span
               className="text-white font-thin leading-none select-none"
-              style={{ fontSize: "clamp(5rem, 15vw, 11rem)", letterSpacing: "-0.04em" }}
+              style={{ fontSize: "clamp(2.5rem, 8vw, 7rem)", letterSpacing: "-0.04em" }}
             >
               {hours}:{minutes}
             </span>
 
             <span
               className="text-white/50 font-thin pb-2 select-none"
-              style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
+              style={{ fontSize: "clamp(1rem, 2.5vw, 2.5rem)" }}
             >
               {seconds}
             </span>
           </div>
 
-          <p className="text-white/60 font-light tracking-widest uppercase text-sm mt-1 select-none">
+          <p className="text-white/60 font-light uppercase tracking-[0.18em] mt-2 select-none"
+            style={{ fontSize: "clamp(0.9rem, 4vw, 3rem)" }}>
             {dateStr}
           </p>
         </div>

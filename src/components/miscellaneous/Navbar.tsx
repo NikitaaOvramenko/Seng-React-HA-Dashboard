@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Cctv, House, Trees, RotateCcw } from "lucide-react";
+import { updateSW } from "@/lib/pwaUpdate";
 
 const navItems = [
   { id: 1, link: "/doorbird", label: "DoorBird", icon: Cctv },
@@ -44,8 +45,7 @@ const Navbar = () => {
           })}
           <button
             onClick={async () => {
-              const keys = await caches.keys();
-              await Promise.all(keys.map((k) => caches.delete(k)));
+              await updateSW(true)
               window.location.reload();
             }}
             className="flex-1"

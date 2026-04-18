@@ -2,7 +2,9 @@ import { useCamera, useEntity, type CameraEntityExtended } from "@hakit/core";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import * as sip from "../communication/sipClient";
 import { setupSipClient } from "../communication/sipClient";
-import {ringtone} from "../lib/ringtones"
+import { ringtone } from "../lib/ringtones"
+
+const RINGTONE_GAIN = 2.0;
 
 interface CallContextProps {
  audioRefCur:RefObject<HTMLAudioElement | null>
@@ -27,6 +29,8 @@ export default function CallContextProvider({children}:CallProviderProps) {
 
   const notification = useEntity('automation.doorbell')
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const ringtoneRef = useRef<HTMLAudioElement | null>(null);
+    const ringtoneCtxRef = useRef<AudioContext | null>(null);
     const [sipReady, setSipReady] = useState(false);
     const [status, setStatus] = useState("Initializing...");
     const [called,setCalled] = useState(false)
@@ -45,14 +49,47 @@ export default function CallContextProvider({children}:CallProviderProps) {
     }
      
 
+  // Set up Web Audio GainNode on the ringtone element once (allows gain > 1.0)
+  useEffect(() => {
+    const el = ringtoneRef.current;
+    if (!el) return;
+
+    const ctx = new AudioContext();
+    const source = ctx.createMediaElementSource(el);
+    const gain = ctx.createGain();
+    gain.gain.value = RINGTONE_GAIN;
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    ringtoneCtxRef.current = ctx;
+
+    return () => { ctx.close(); };
+  }, []);
+
+  // Play / stop ringtone based on call state
+  useEffect(() => {
+    const el = ringtoneRef.current;
+    if (!el) return;
+
+    if (called && status !== "Answered") {
+      ringtoneCtxRef.current?.resume();
+      el.currentTime = 0;
+      el.play().catch(() => {});
+    } else {
+      el.pause();
+      el.currentTime = 0;
+    }
+  }, [called, status]);
+
   useEffect(() => {
       let mounted = true;
-  
+
       const setupSip = async () => {
         if (!audioRef.current) {
           if (mounted) setStatus("Audio element missing");
           return;
         }
+
+          audioRef.current.volume = 1.0;
   
         try {
           await sip.initSip(audioRef.current);
@@ -90,8 +127,7 @@ export default function CallContextProvider({children}:CallProviderProps) {
       calledSetter,
     }}>
       <audio ref={audioRef} autoPlay style={{ display: 'none' }} />
-      
-      {called && !(status == "Answered") && <audio src={ringtone.giornos_ringtone}  autoPlay loop style={{display:'none'}} ></audio>}
+      <audio ref={ringtoneRef} src={ringtone.giornos_ringtone} loop style={{ display: 'none' }} />
       {children}
     </CallContext.Provider>
   );
