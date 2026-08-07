@@ -36,6 +36,7 @@ export default function CallModal() {
       callCxt.statusSetter("Hangup")
     } catch (err) {
       console.error("Hangup failed:", err);
+      callCxt.statusSetter("Hangup failed");
     } finally {
       callCxt.calledSetter(false);
       navigate("/")

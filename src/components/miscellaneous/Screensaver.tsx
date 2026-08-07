@@ -2,6 +2,7 @@ import { Meteors } from "../ui/meteors";
 import { useTime } from "../../context/useTimeContext";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "../../context/useSnackbar";
 
 interface WeatherData {
   name: string;
@@ -26,6 +27,7 @@ export default function Screensaver() {
   const ctx = useTime();
   const now = useNow();
   const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
 
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,8 +49,10 @@ export default function Screensaver() {
 
         const data = await response.json();
         setWeather(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Weather fetch failed";
+        setError(message);
+        showSnackbar(message, "error", 5000);
       } finally {
         setLoading(false);
       }
@@ -58,7 +62,7 @@ export default function Screensaver() {
     const id = setInterval(fetchWeather, 10 * 60 * 1000);
 
     return () => clearInterval(id);
-  }, []);
+  }, [showSnackbar]);
 
   const hours = now.getHours().toString().padStart(2, "0");
   const minutes = now.getMinutes().toString().padStart(2, "0");

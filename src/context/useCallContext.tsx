@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode,
 import * as sip from "../communication/sipClient";
 import { setupSipClient } from "../communication/sipClient";
 import { ringtone } from "../lib/ringtones"
+import { useSnackbar } from "./useSnackbar";
 
 const RINGTONE_GAIN = 2.0;
 
@@ -28,6 +29,7 @@ const CallContext = createContext<CallContextProps | null>(null)
 export default function CallContextProvider({children}:CallProviderProps) {
 
   const notification = useEntity('automation.doorbell')
+    const { showSnackbar } = useSnackbar();
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const ringtoneRef = useRef<HTMLAudioElement | null>(null);
     const ringtoneCtxRef = useRef<AudioContext | null>(null);
@@ -37,6 +39,7 @@ export default function CallContextProvider({children}:CallProviderProps) {
     const [status, setStatus] = useState("Initializing...");
     const [called,setCalled] = useState(false)
     const camera = useCamera('camera.doorbird_live')
+    const previousCalledRef = useRef(false);
    
 
 
@@ -86,6 +89,23 @@ export default function CallContextProvider({children}:CallProviderProps) {
       el.currentTime = 0;
     }
   }, [called, status]);
+
+  useEffect(() => {
+    if (called && !previousCalledRef.current) {
+      showSnackbar("Incoming DoorBird call", "info");
+    }
+    previousCalledRef.current = called;
+  }, [called, showSnackbar]);
+
+  useEffect(() => {
+    if (status === "Answered") {
+      showSnackbar("Call answered", "success");
+    } else if (status === "Hangup" || status === "Hung up") {
+      showSnackbar("Call ended", "info");
+    } else if (/failed|error|missing/i.test(status)) {
+      showSnackbar(status, "error", 5000);
+    }
+  }, [showSnackbar, status]);
 
   useEffect(() => {
       let mounted = true;

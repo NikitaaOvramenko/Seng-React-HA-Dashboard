@@ -9,12 +9,16 @@ import { TimeProvider } from './context/useTimeContext';
 import CallContextProvider from './context/useCallContext';
 import CallModal from "./components/miscellaneous/CallModal"
 import SpotlightBackground from './components/ui/spotlight-background';
+import GlobalErrorBoundary from './components/miscellaneous/GlobalErrorBoundary';
+import { SnackbarProvider } from './context/useSnackbar';
 
 
 function App() {
   const url = import.meta.env.VITE_HA_URL;
 
   return (
+    <SnackbarProvider>
+    <GlobalErrorBoundary>
     <HassConnect hassUrl={url}>
       <CallContextProvider>
       <TimeProvider>
@@ -35,6 +39,8 @@ function App() {
       </TimeProvider>
       </CallContextProvider>
     </HassConnect>
+    </GlobalErrorBoundary>
+    </SnackbarProvider>
   );
 }
 

@@ -89,7 +89,6 @@ export default function DoorBirdPanel() {
                   : String(err);
 
                 callCxt.statusSetter(`Call failed: ${errorDetails}`);
-                window.alert(`Call failed\n${errorDetails}`);
               }
             }}
             disabled={!callCxt.sipReadyCur}
