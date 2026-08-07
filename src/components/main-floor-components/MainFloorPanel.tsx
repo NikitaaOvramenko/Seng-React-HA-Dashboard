@@ -5,21 +5,18 @@ import PageHeader from "../miscellaneous/PageHeader";
 import { LayoutPanelTop } from "lucide-react";
 import CustomGroup from "../miscellaneous/CustomGroup";
 
-const areaChoice = [
-  "Main Floor - Kitchen - Breakfast/Dinner",
-  "Main Floor - Kitchen",
-];
-
-const areaDisplayNames: Record<string, string> = {
+const areaNames: Record<string, string> = {
   "Main Floor - Kitchen": "Kitchen",
-  "Main Floor - Kitchen - Breakfast/Dinner": "Dining - Area",
+  "Main Floor - Kitchen - Breakfast/Dinner": "Dining Area",
+  "Main Floor - Living Room": "Living Room",
 };
 
-const customLightNames: Record<string, string> = {
-  "light.in_wall_600w_dimmer_3": "Island - Light",
-  "light.in_wall_600w_dimmer_2": "Stove - Light",
-  "light.in_wall_600w_dimmer_4": "Breakfast / Dinner Table - Light",
-  "light.in_wall_600w_dimmer_5": "Chandelier - Light",
+const lightNames: Record<string, string> = {
+  "light.in_wall_600w_dimmer_3": "Island Light",
+  "light.in_wall_600w_dimmer_2": "Stove Light",
+  "light.in_wall_600w_dimmer_4": "Breakfast / Dinner Table Light",
+  "light.in_wall_600w_dimmer_5": "Chandelier Light",
+  "light.in_wall_600w_dimmer": "Living Room Light",
 };
 
 function formatEntityName(entityId: string) {
@@ -30,7 +27,7 @@ function formatEntityName(entityId: string) {
 }
 
 export default function MainFloorPanel() {
-  const areas = useAreas().filter((area) => areaChoice.includes(area.name));
+  const areas = useAreas().filter((area) => Object.hasOwn(areaNames, area.name));
 
   return (
     <div>
@@ -41,7 +38,7 @@ export default function MainFloorPanel() {
             key={area.area_id}
            
             className="flex flex-col text-white"
-            title={areaDisplayNames[area.name] ?? area.name}
+            title={areaNames[area.name]}
           >
             {area.entities
               .filter(
@@ -55,7 +52,7 @@ export default function MainFloorPanel() {
                   key={entity.entity_id}
                   entityName={entity.entity_id as EntityName}
                 >
-                  {customLightNames[entity.entity_id] ??
+                  {lightNames[entity.entity_id] ??
                     formatEntityName(entity.entity_id)}
                 </ButtonCustom>
               ))}
