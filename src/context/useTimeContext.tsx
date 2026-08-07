@@ -28,7 +28,7 @@ export function TimeProvider({ children }: TimeProviderProps) {
   }, []);
 
   useEffect(() => {
-    const reset = () => setTime(10);
+    const reset = () => setTime(15);
     document.addEventListener("pointerdown", reset);
     return () => document.removeEventListener("pointerdown", reset);
   }, []);

@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Cctv, House, Trees, RotateCcw } from "lucide-react";
+import { updateSW } from "@/lib/pwaUpdate";
 
 const navItems = [
   { id: 1, link: "/doorbird", label: "DoorBird", icon: Cctv },
@@ -9,6 +10,16 @@ const navItems = [
 
 const Navbar = () => {
   const location = useLocation();
+
+  const hardReload = async () => {
+    if ("caches" in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((key) => caches.delete(key)));
+    }
+
+    await updateSW(true);
+    window.location.reload();
+  };
 
   return (
     <div className="fixed bottom-0 left-0 w-full z-50 flex justify-center pointer-events-none">
@@ -43,11 +54,7 @@ const Navbar = () => {
             );
           })}
           <button
-            onClick={async () => {
-              const keys = await caches.keys();
-              await Promise.all(keys.map((k) => caches.delete(k)));
-              window.location.reload();
-            }}
+            onClick={hardReload}
             className="flex-1"
           >
             <div className="flex flex-col items-center gap-1.5 py-3.5 px-2 transition-all text-zinc-600 hover:text-zinc-300">
