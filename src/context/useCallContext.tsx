@@ -31,6 +31,8 @@ export default function CallContextProvider({children}:CallProviderProps) {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const ringtoneRef = useRef<HTMLAudioElement | null>(null);
     const ringtoneCtxRef = useRef<AudioContext | null>(null);
+    const ringtoneSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+    const ringtoneGainRef = useRef<GainNode | null>(null);
     const [sipReady, setSipReady] = useState(false);
     const [status, setStatus] = useState("Initializing...");
     const [called,setCalled] = useState(false)
@@ -53,6 +55,7 @@ export default function CallContextProvider({children}:CallProviderProps) {
   useEffect(() => {
     const el = ringtoneRef.current;
     if (!el) return;
+    if (ringtoneCtxRef.current) return;
 
     const ctx = new AudioContext();
     const source = ctx.createMediaElementSource(el);
@@ -61,8 +64,12 @@ export default function CallContextProvider({children}:CallProviderProps) {
     source.connect(gain);
     gain.connect(ctx.destination);
     ringtoneCtxRef.current = ctx;
+    ringtoneSourceRef.current = source;
+    ringtoneGainRef.current = gain;
 
-    return () => { ctx.close(); };
+    return () => {
+      ctx.suspend().catch(() => {});
+    };
   }, []);
 
   // Play / stop ringtone based on call state

@@ -84,7 +84,12 @@ export default function DoorBirdPanel() {
                 callCxt.statusSetter("Answered")
               } catch (err) {
                 console.error("Call failed:", err);
-                callCxt.statusSetter("Call failed");
+                const errorDetails = err instanceof Error
+                  ? `${err.name}: ${err.message}`
+                  : String(err);
+
+                callCxt.statusSetter(`Call failed: ${errorDetails}`);
+                window.alert(`Call failed\n${errorDetails}`);
               }
             }}
             disabled={!callCxt.sipReadyCur}

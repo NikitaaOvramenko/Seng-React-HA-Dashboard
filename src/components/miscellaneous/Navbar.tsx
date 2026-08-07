@@ -11,6 +11,16 @@ const navItems = [
 const Navbar = () => {
   const location = useLocation();
 
+  const hardReload = async () => {
+    if ("caches" in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((key) => caches.delete(key)));
+    }
+
+    await updateSW(true);
+    window.location.reload();
+  };
+
   return (
     <div className="fixed bottom-0 left-0 w-full z-50 flex justify-center pointer-events-none">
       <div className="w-[90%] mb-3 rounded-3xl overflow-hidden border border-zinc-800 bg-zinc-950/90 backdrop-blur-xl shadow-2xl pointer-events-auto">
@@ -44,10 +54,7 @@ const Navbar = () => {
             );
           })}
           <button
-            onClick={async () => {
-              await updateSW(true)
-              window.location.reload();
-            }}
+            onClick={hardReload}
             className="flex-1"
           >
             <div className="flex flex-col items-center gap-1.5 py-3.5 px-2 transition-all text-zinc-600 hover:text-zinc-300">

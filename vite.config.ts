@@ -15,7 +15,7 @@ export default defineConfig({
   manifest:{
     name:'Seng Dashboard',
     short_name:'Dashboard',
-    start_url:'/local/seng-dashboard-react/',
+    start_url:'/local/seng-dashboard-react/index.html',
     display:"fullscreen",
     background_color:"#000000",
     theme_color:"#000000",
