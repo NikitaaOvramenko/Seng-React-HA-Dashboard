@@ -4,6 +4,7 @@ import * as sip from "../communication/sipClient";
 import { setupSipClient } from "../communication/sipClient";
 import { ringtone } from "../lib/ringtones"
 import { useSnackbar } from "./useSnackbar";
+import { devToolsEnabled } from "../config/devTools";
 
 const RINGTONE_GAIN = 2.0;
 
@@ -11,12 +12,14 @@ interface CallContextProps {
  audioRefCur:RefObject<HTMLAudioElement | null>
  sipReadyCur:boolean
  statusCur:string
- calledCur:boolean 
+ calledCur:boolean
+ testCallCur:boolean
  cameraCur:CameraEntityExtended
 
  sipReadySetter: (set:boolean) => void
  statusSetter: (status:string) => void
  calledSetter: (called:boolean) => void
+ startTestCall: () => void
  
 }
 
@@ -30,6 +33,7 @@ export default function CallContextProvider({children}:CallProviderProps) {
 
   const notification = useEntity('automation.doorbell')
     const { showSnackbar } = useSnackbar();
+    const notificationRef = useRef(notification);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const ringtoneRef = useRef<HTMLAudioElement | null>(null);
     const ringtoneCtxRef = useRef<AudioContext | null>(null);
@@ -38,6 +42,7 @@ export default function CallContextProvider({children}:CallProviderProps) {
     const [sipReady, setSipReady] = useState(false);
     const [status, setStatus] = useState("Initializing...");
     const [called,setCalled] = useState(false)
+    const [testCall, setTestCall] = useState(false)
     const camera = useCamera('camera.doorbird_live')
     const previousCalledRef = useRef(false);
    
@@ -51,6 +56,13 @@ export default function CallContextProvider({children}:CallProviderProps) {
     }
      const calledSetter = (called:boolean) => {
       setCalled(called)
+      if (!called) setTestCall(false)
+    }
+    const startTestCall = () => {
+      if (!devToolsEnabled) return;
+      setTestCall(true)
+      setStatus("Ringing")
+      setCalled(true)
     }
      
 
@@ -108,6 +120,10 @@ export default function CallContextProvider({children}:CallProviderProps) {
   }, [showSnackbar, status]);
 
   useEffect(() => {
+    notificationRef.current = notification;
+  }, [notification]);
+
+  useEffect(() => {
       let mounted = true;
 
       const setupSip = async () => {
@@ -120,7 +136,7 @@ export default function CallContextProvider({children}:CallProviderProps) {
   
         try {
           await sip.initSip(audioRef.current);
-          setupSipClient(setCalled,setStatus,notification);
+          setupSipClient(setCalled,setStatus,notificationRef.current);
           if (mounted) {
             setSipReady(true);
             setStatus("Connected");
@@ -148,10 +164,12 @@ export default function CallContextProvider({children}:CallProviderProps) {
       sipReadyCur: sipReady,
       statusCur: status,
       calledCur: called,
+      testCallCur: testCall,
       cameraCur: camera,
       sipReadySetter,
       statusSetter,
       calledSetter,
+      startTestCall,
     }}>
       <audio ref={audioRef} autoPlay style={{ display: 'none' }} />
       <audio ref={ringtoneRef} src={ringtone.giornos_ringtone} loop style={{ display: 'none' }} />
@@ -160,11 +178,13 @@ export default function CallContextProvider({children}:CallProviderProps) {
   );
 }
 
+// Context providers and their hooks intentionally share this module.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCall(){
   const context = useContext(CallContext)
   
      if(!context) {
-          throw new Error('useTheme must be used within ThemeContext');
+          throw new Error('useCall must be used within CallContextProvider');
       }
   
       return context;

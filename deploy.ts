@@ -4,16 +4,15 @@ import { join } from 'path';
 import chalk from 'chalk';
 import { access, constants } from 'fs/promises';
 import prompts from 'prompts';
-// intentionally only loading the main .env so we're not using the token at all here.
-dotenv.config();
+dotenv.config({ path: '.env.production.local' });
 
 const HA_URL = process.env.VITE_HA_URL;
-const HA_TOKEN = process.env.VITE_HA_TOKEN;
-const USERNAME = process.env.VITE_SSH_USERNAME;
-const PASSWORD = process.env.VITE_SSH_PASSWORD;
-const HOST_OR_IP_ADDRESS = process.env.VITE_SSH_HOSTNAME;
+const HA_TOKEN = process.env.HA_TOKEN;
+const USERNAME = process.env.SSH_USERNAME;
+const PASSWORD = process.env.SSH_PASSWORD;
+const HOST_OR_IP_ADDRESS = process.env.SSH_HOSTNAME;
 const PORT = 22;
-const REMOTE_FOLDER_NAME = process.env.VITE_FOLDER_NAME;
+const REMOTE_FOLDER_NAME = process.env.DEPLOY_FOLDER_NAME;
 const LOCAL_DIRECTORY = './dist';
 const REMOTE_PATH = `/www/${REMOTE_FOLDER_NAME}`;
 
@@ -25,7 +24,7 @@ async function confirmDeploymentWithHaToken() {
     type: 'confirm',
     name: 'value',
     message: chalk.yellow(`
-WARN: You are about to deploy to Home Assistant with VITE_HA_TOKEN set in .env.
+WARN: You are about to deploy to Home Assistant with HA_TOKEN set.
 
 READ MORE - https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-deploying--docs#important;
 
@@ -51,19 +50,19 @@ async function checkDirectoryExists() {
 async function deploy() {
   try {
     if (!HA_URL) {
-      throw new Error('Missing VITE_HA_URL in .env file');
+      throw new Error('Missing VITE_HA_URL in .env.production.local');
     }
     if (!REMOTE_FOLDER_NAME) {
-      throw new Error('Missing VITE_FOLDER_NAME in .env file');
+      throw new Error('Missing DEPLOY_FOLDER_NAME in .env.production.local');
     }
     if (!USERNAME) {
-      throw new Error('Missing VITE_SSH_USERNAME in .env file');
+      throw new Error('Missing SSH_USERNAME in .env.production.local');
     }
     if (!PASSWORD) {
-      throw new Error('Missing VITE_SSH_PASSWORD in .env file');
+      throw new Error('Missing SSH_PASSWORD in .env.production.local');
     }
     if (!HOST_OR_IP_ADDRESS) {
-      throw new Error('Missing VITE_SSH_HOSTNAME in .env file');
+      throw new Error('Missing SSH_HOSTNAME in .env.production.local');
     }
     const exists = await checkDirectoryExists();
     if (!exists) {

@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "prebuild": "npm run sync-types",
-    "sync-types": "ts-node --esm sync-types.ts",
+    "build": "tsc -b && vite build --mode production",
+    "prebuild": "npm run sync-types:production",
+    "sync-types": "ts-node --esm sync-types.ts --mode development",
+    "sync-types:production": "ts-node --esm sync-types.ts --mode production",
     "lint": "eslint .",
+    "predeploy": "npm run build",
     "deploy": "tsx deploy.ts",
     "preview": "vite preview",
     "comm-test": "ts-node --esm src/communication/SimpleUser.ts"

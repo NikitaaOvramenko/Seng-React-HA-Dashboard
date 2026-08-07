@@ -75,6 +75,7 @@ export function setupSipClient(setCalled: React.Dispatch<React.SetStateAction<bo
 
     onCallHangup: async () => {
       handleInboundHangup(setStatus)
+      setCalled(false);
     }
   };
 }

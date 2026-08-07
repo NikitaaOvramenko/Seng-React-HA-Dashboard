@@ -1,9 +1,10 @@
-import { Cctv, Phone, Mic, PhoneOff, Zap, Smartphone } from "lucide-react";
+import { Cctv, PhoneCall, PhoneOff, Zap, Smartphone } from "lucide-react";
 import PageHeader from "../miscellaneous/PageHeader";
 import * as sip from "../../communication/sipClient";
 import ReactPlayer from 'react-player'
 import { useCall } from "@/context/useCallContext";
 import { useEntity } from "@hakit/core";
+import { devToolsEnabled } from "../../config/devTools";
 
 
 export default function DoorBirdPanel() {
@@ -61,6 +62,17 @@ export default function DoorBirdPanel() {
           <Smartphone size={14} strokeWidth={1.8} className="text-zinc-400" />
           Switch
         </button>
+        {devToolsEnabled && (
+          <button
+            onClick={callCxt.startTestCall}
+            disabled={callCxt.calledCur}
+            type="button"
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 border border-zinc-700 text-white text-sm font-semibold cursor-pointer hover:bg-zinc-800 hover:border-zinc-600 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <PhoneCall size={14} strokeWidth={1.8} className="text-zinc-400" />
+            Test call
+          </button>
+        )}
       </div>
 
       {/* Contacts */}
@@ -105,36 +117,7 @@ export default function DoorBirdPanel() {
         <div className="flex items-center justify-center py-10">
           <span className="text-zinc-500 text-sm font-medium">{callCxt.statusCur}</span>
         </div>
-        <div className="flex items-center justify-around px-6 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-          <button
-            onClick={async () => {
-              try {
-                if(callCxt.statusCur == "Answered"){
-                  return
-                }
-                await sip.answerSip();
-                callCxt.statusSetter("Answered");
-              } catch (err) {
-                console.error("Answer failed:", err);
-                callCxt.statusSetter("Answer failed");
-              }
-            }}
-            disabled={!callCxt.sipReadyCur}
-            type="button"
-            className="w-11 h-11 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center cursor-pointer hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Phone size={18} className="text-white" strokeWidth={1.8} />
-          </button>
-
-          <button
-            type="button"
-            className="w-11 h-11 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center cursor-pointer hover:bg-zinc-700 transition-colors"
-          >
-            <Mic size={18} className="text-white" strokeWidth={1.8} />
-          </button>
-
-          {/* <span className="text-zinc-500 text-sm font-mono font-bold">{callTime}</span> */}
-
+        <div className="flex items-center justify-center px-6 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
           <button
             onClick={async () => {
               try {
@@ -145,9 +128,10 @@ export default function DoorBirdPanel() {
                 callCxt.statusSetter("Hangup failed");
               }
             }}
-            disabled={!callCxt.sipReadyCur}
+            disabled={!callCxt.sipReadyCur || callCxt.statusCur !== "Answered"}
             type="button"
-            className="w-11 h-11 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center cursor-pointer hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Hang up call"
+            className="w-11 h-11 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center cursor-pointer hover:bg-zinc-700 transition-colors disabled:opacity-35 disabled:cursor-not-allowed"
           >
             <PhoneOff size={18} className="text-zinc-400" strokeWidth={1.8} />
           </button>
