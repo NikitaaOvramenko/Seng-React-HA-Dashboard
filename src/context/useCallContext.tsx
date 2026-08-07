@@ -2,11 +2,13 @@ import { useCamera, useEntity, type CameraEntityExtended } from "@hakit/core";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import * as sip from "../communication/sipClient";
 import { setupSipClient } from "../communication/sipClient";
-import { ringtone } from "../lib/ringtones"
+import { ringtone, type RingtoneId } from "../lib/ringtones"
 import { useSnackbar } from "./useSnackbar";
 import { devToolsEnabled } from "../config/devTools";
 
 const RINGTONE_GAIN = 2.0;
+const RINGTONE_STORAGE_KEY = "doorbird-ringtone";
+const DEFAULT_RINGTONE: RingtoneId = "giornos_ringtone";
 
 interface CallContextProps {
  audioRefCur:RefObject<HTMLAudioElement | null>
@@ -14,12 +16,14 @@ interface CallContextProps {
  statusCur:string
  calledCur:boolean
  testCallCur:boolean
+ ringtoneCur:RingtoneId
  cameraCur:CameraEntityExtended
 
  sipReadySetter: (set:boolean) => void
  statusSetter: (status:string) => void
  calledSetter: (called:boolean) => void
  startTestCall: () => void
+ ringtoneSetter: (ringtone: RingtoneId) => void
  
 }
 
@@ -43,6 +47,10 @@ export default function CallContextProvider({children}:CallProviderProps) {
     const [status, setStatus] = useState("Initializing...");
     const [called,setCalled] = useState(false)
     const [testCall, setTestCall] = useState(false)
+    const [selectedRingtone, setSelectedRingtone] = useState<RingtoneId>(() => {
+      const stored = localStorage.getItem(RINGTONE_STORAGE_KEY);
+      return stored && stored in ringtone ? stored as RingtoneId : DEFAULT_RINGTONE;
+    })
     const camera = useCamera('camera.doorbird_live')
     const previousCalledRef = useRef(false);
    
@@ -63,6 +71,11 @@ export default function CallContextProvider({children}:CallProviderProps) {
       setTestCall(true)
       setStatus("Ringing")
       setCalled(true)
+    }
+    const ringtoneSetter = (ringtoneId: RingtoneId) => {
+      setSelectedRingtone(ringtoneId)
+      localStorage.setItem(RINGTONE_STORAGE_KEY, ringtoneId)
+      showSnackbar("Ringtone updated", "success")
     }
      
 
@@ -100,7 +113,7 @@ export default function CallContextProvider({children}:CallProviderProps) {
       el.pause();
       el.currentTime = 0;
     }
-  }, [called, status]);
+  }, [called, selectedRingtone, status]);
 
   useEffect(() => {
     if (called && !previousCalledRef.current) {
@@ -165,14 +178,16 @@ export default function CallContextProvider({children}:CallProviderProps) {
       statusCur: status,
       calledCur: called,
       testCallCur: testCall,
+      ringtoneCur: selectedRingtone,
       cameraCur: camera,
       sipReadySetter,
       statusSetter,
       calledSetter,
       startTestCall,
+      ringtoneSetter,
     }}>
       <audio ref={audioRef} autoPlay style={{ display: 'none' }} />
-      <audio ref={ringtoneRef} src={ringtone.giornos_ringtone} loop style={{ display: 'none' }} />
+      <audio ref={ringtoneRef} src={ringtone[selectedRingtone]} loop style={{ display: 'none' }} />
       {children}
     </CallContext.Provider>
   );

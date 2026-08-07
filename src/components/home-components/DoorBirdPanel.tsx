@@ -1,10 +1,11 @@
-import { Cctv, PhoneCall, PhoneOff, Zap, Smartphone } from "lucide-react";
+import { Cctv, Music2, PhoneCall, PhoneOff, Zap, Smartphone } from "lucide-react";
 import PageHeader from "../miscellaneous/PageHeader";
 import * as sip from "../../communication/sipClient";
 import ReactPlayer from 'react-player'
 import { useCall } from "@/context/useCallContext";
 import { useEntity } from "@hakit/core";
 import { devToolsEnabled } from "../../config/devTools";
+import { ringtoneOptions, type RingtoneId } from "../../lib/ringtones";
 
 
 export default function DoorBirdPanel() {
@@ -73,6 +74,43 @@ export default function DoorBirdPanel() {
             Test call
           </button>
         )}
+      </div>
+
+      {/* Ringtone selection */}
+      <div className="flex flex-col gap-3 max-w-2xl mx-auto w-full">
+        <span className="text-zinc-400 text-xs font-bold uppercase tracking-widest px-1">
+          Sound
+        </span>
+        <label
+          className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
+          style={{
+            background: "rgba(255,255,255,0.05)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            boxShadow: "0 4px 32px rgba(0,0,0,0.5)",
+          }}
+        >
+          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-zinc-800">
+            <Music2 size={16} className="text-zinc-400" strokeWidth={1.8} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-semibold text-white">Ringtone</span>
+            <span className="block text-xs text-zinc-500">Plays for incoming calls</span>
+          </span>
+          <select
+            value={callCxt.ringtoneCur}
+            onChange={(event) => callCxt.ringtoneSetter(event.target.value as RingtoneId)}
+            className="max-w-44 cursor-pointer rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm font-medium text-white outline-none transition-colors hover:border-zinc-600 focus:border-zinc-500"
+            aria-label="Select ringtone"
+          >
+            {ringtoneOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       {/* Contacts */}
