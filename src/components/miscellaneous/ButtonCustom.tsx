@@ -62,25 +62,31 @@ export default function ButtonCustom({ entityName, children,className }: Props) 
     }
   };
 
+  const suppressDragClick = () => {
+    suppressClickRef.current = true;
+    window.setTimeout(() => {
+      suppressClickRef.current = false;
+    }, 0);
+  };
+
   const finishSliding = (event: PointerEvent<HTMLButtonElement>) => {
     clearHoldTimer();
     if (!slidingRef.current) return;
 
     applyBrightness(brightnessFromPointer(event.clientX), true);
     slidingRef.current = false;
-    suppressClickRef.current = true;
+    suppressDragClick();
     setIsSliding(false);
     setPreviewBrightness(null);
   };
 
   const handleClick = () => {
-    if (suppressClickRef.current) {
-      suppressClickRef.current = false;
-      return;
-    }
+    if (suppressClickRef.current) return;
     if (isUnavailable) return;
     if (isOn) {
       entity.service.turnOff();
+    } else if (supportsBrightness) {
+      entity.service.turnOn({ serviceData: { brightness_pct: 100 } });
     } else {
       entity.service.turnOn();
     }
@@ -109,7 +115,7 @@ export default function ButtonCustom({ entityName, children,className }: Props) 
 
   const handlePointerCancel = () => {
     clearHoldTimer();
-    if (slidingRef.current) suppressClickRef.current = true;
+    if (slidingRef.current) suppressDragClick();
     slidingRef.current = false;
     setIsSliding(false);
     setPreviewBrightness(null);
