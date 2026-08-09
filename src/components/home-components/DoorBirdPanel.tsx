@@ -143,7 +143,7 @@ export default function DoorBirdPanel() {
             }}
             disabled={!callCxt.sipReadyCur}
             type="button"
-            className="text-white text-xs font-bold tracking-widest uppercase bg-zinc-700 hover:bg-zinc-600 border border-zinc-600 px-3 py-1.5 rounded-full cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-white text-xs font-bold tracking-widest uppercase bg-green-600 hover:bg-green-500 border border-green-500 hover:border-green-400 px-3 py-1.5 rounded-full cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Call
           </button>
@@ -169,9 +169,9 @@ export default function DoorBirdPanel() {
             disabled={!callCxt.sipReadyCur || callCxt.statusCur !== "Answered"}
             type="button"
             aria-label="Hang up call"
-            className="w-11 h-11 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center cursor-pointer hover:bg-zinc-700 transition-colors disabled:opacity-35 disabled:cursor-not-allowed"
+            className="w-11 h-11 rounded-full bg-red-600 border border-red-500 flex items-center justify-center cursor-pointer hover:bg-red-500 hover:border-red-400 transition-colors disabled:opacity-35 disabled:cursor-not-allowed"
           >
-            <PhoneOff size={18} className="text-zinc-400" strokeWidth={1.8} />
+            <PhoneOff size={18} className="text-white" strokeWidth={1.8} />
           </button>
         </div>
       </div>

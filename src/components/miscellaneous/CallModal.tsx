@@ -148,28 +148,28 @@ export default function CallModal() {
         <footer className="flex items-center justify-center gap-14 border-t border-white/10 bg-white/[0.025] px-6 py-6">
           <div className="flex flex-col items-center gap-2">
             <button
+              onClick={handleHangup}
+              disabled={!controlsEnabled}
+              type="button"
+              className="grid size-14 place-items-center rounded-full border border-red-500 bg-red-600 text-white shadow-lg shadow-red-950/30 transition-all hover:scale-105 hover:border-red-400 hover:bg-red-500 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <PhoneOff className="size-5" strokeWidth={2} />
+            </button>
+            <span className="text-[11px] font-medium text-zinc-500">Hang up</span>
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            <button
               onClick={handleAnswer}
               disabled={!controlsEnabled || isAnswered}
               type="button"
-              className="grid size-14 place-items-center rounded-full border border-white bg-white text-black shadow-lg shadow-black/30 transition-all hover:scale-105 hover:bg-zinc-200 active:scale-95 disabled:cursor-not-allowed disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-600 disabled:shadow-none"
+              className="grid size-14 place-items-center rounded-full border border-green-500 bg-green-600 text-white shadow-lg shadow-green-950/30 transition-all hover:scale-105 hover:border-green-400 hover:bg-green-500 active:scale-95 disabled:cursor-not-allowed disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-600 disabled:shadow-none"
             >
               <Phone className="size-5" strokeWidth={2} />
             </button>
             <span className="text-[11px] font-medium text-zinc-500">
               {isAnswered ? "Answered" : "Answer"}
             </span>
-          </div>
-
-          <div className="flex flex-col items-center gap-2">
-            <button
-              onClick={handleHangup}
-              disabled={!controlsEnabled}
-              type="button"
-              className="grid size-14 place-items-center rounded-full border border-zinc-700 bg-zinc-800 text-white shadow-lg shadow-black/30 transition-all hover:scale-105 hover:border-zinc-500 hover:bg-zinc-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <PhoneOff className="size-5" strokeWidth={2} />
-            </button>
-            <span className="text-[11px] font-medium text-zinc-500">Hang up</span>
           </div>
         </footer>
       </section>
